@@ -5,8 +5,8 @@ Run LATER, once the participant emails are final and seed-delegates.js has
 produced the credentials CSV.
 
 Usage:
-    RESEND_API_KEY=... APP_URL=https://delegateapp.thecscd.org \
-    FROM_EMAIL=noreply@thecscd.org \
+    RESEND_API_KEY=... APP_URL=https://delegateapp.thecipes.org \
+    FROM_EMAIL=noreply@thecipes.org \
     python3 scripts/send_credentials.py delegate-credentials.csv
 
 The CSV is the output of seed-delegates.js with header: email,password,name
@@ -21,9 +21,9 @@ import time
 import requests
 
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
-FROM_EMAIL = os.environ.get("FROM_EMAIL", "noreply@thecscd.org")
-APP_URL = os.environ.get("APP_URL", "https://delegateapp.thecscd.org")
-EVENT_NAME = os.environ.get("EVENT_NAME", "the CSCD program")
+FROM_EMAIL = os.environ.get("FROM_EMAIL", "noreply@thecipes.org")
+APP_URL = os.environ.get("APP_URL", "https://delegateapp.thecipes.org")
+EVENT_NAME = os.environ.get("EVENT_NAME", "the CIPES program")
 
 RESEND_ENDPOINT = "https://api.resend.com/emails"
 
@@ -37,8 +37,8 @@ def build_html(name: str, email: str, password: str) -> str:
       <p>Your delegate app account is ready. Open the app and sign in:</p>
       <p>
         <a href="{APP_URL}"
-           style="background:#E6EB1C;color:#050505;padding:10px 18px;
-                  text-decoration:none;font-weight:bold;border:2px solid #050505;">
+           style="background:#001224;color:#E5DBC2;padding:10px 18px;
+                  text-decoration:none;font-weight:bold;border:2px solid #001224;">
           Open the Delegate App
         </a>
       </p>
@@ -49,14 +49,14 @@ def build_html(name: str, email: str, password: str) -> str:
       <p>You can change your password from inside the app after signing in.</p>
       <p style="font-size:13px;color:#6b6b6b;">If you didn't expect this email,
          please ignore it.</p>
-      <p>— CSCD</p>
+      <p>— CIPES</p>
     </div>
     """
 
 
 def send(to_email: str, name: str, password: str) -> bool:
     payload = {
-        "from": f"CSCD <{FROM_EMAIL}>",
+        "from": f"CIPES <{FROM_EMAIL}>",
         "to": [to_email],
         "subject": f"Your {EVENT_NAME} delegate app login",
         "html": build_html(name, to_email, password),

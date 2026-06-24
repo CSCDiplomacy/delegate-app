@@ -6,7 +6,7 @@
      available offline).
    - Auth + per-user + dynamic endpoints (/api/me, /api/config, /api/favourites,
      /api/announcements, /api/feedback, Supabase): always network, never cached. */
-const CACHE = 'cscd-v5';
+const CACHE = 'cipes-v1';
 const SHELL = [
   '/',
   '/index.html',

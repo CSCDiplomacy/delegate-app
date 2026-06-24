@@ -1,4 +1,4 @@
-// CSCD Delegate App — Express entry point (Hostinger Passenger startup file)
+// CIPES Delegate App — Express entry point (Hostinger Passenger startup file)
 require('dotenv').config();
 
 const path = require('path');
@@ -57,8 +57,38 @@ app.get('/api/config', (req, res) => {
   res.json({
     supabaseUrl: process.env.SUPABASE_URL || '',
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
-    eventName: process.env.EVENT_NAME || 'CSCD Delegate App',
+    eventName: process.env.EVENT_NAME || 'CIPES Delegate App',
   });
+});
+
+// --- ICS calendar event (opens native Calendar on iOS/macOS/desktop) --------
+app.get('/api/ics', (req, res) => {
+  const { title = 'Event', date = '', time = '09:00', venue = '', duration = '60' } = req.query;
+  const dt = date.replace(/-/g, '');
+  const [h, m] = time.split(':');
+  const durMin = parseInt(duration, 10) || 60;
+  const endTotalMin = parseInt(h, 10) * 60 + parseInt(m, 10) + durMin;
+  const eh = String(Math.floor(endTotalMin / 60) % 24).padStart(2, '0');
+  const em = String(endTotalMin % 60).padStart(2, '0');
+  const uid = `${dt}-${h}${m}-cipes@thecipes.org`;
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//CIPES//YEF Frankfurt 2026//EN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${uid}`,
+    `DTSTART:${dt}T${h}${m}00`,
+    `DTEND:${dt}T${eh}${em}00`,
+    `SUMMARY:${title}`,
+    `LOCATION:${venue}`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+  const filename = title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.ics';
+  res.setHeader('Content-Type', 'text/calendar; charset=utf-8; method=PUBLISH');
+  res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+  res.send(ics);
 });
 
 // --- Health -----------------------------------------------------------------
@@ -91,7 +121,7 @@ app.get('*', (req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`CSCD Delegate App listening on :${PORT}`);
+  console.log(`CIPES Delegate App listening on :${PORT}`);
   // Email reminder cron (no-op if Resend isn't configured yet).
   startReminderJob();
 });

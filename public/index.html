@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#001224" />
-  <title>CIPES Delegate App</title>
+  <title>YEF Frankfurt 2026 — CIPES</title>
   <link rel="manifest" href="/manifest.json" />
   <link rel="icon" href="/img/icon-192.png" />
   <link rel="apple-touch-icon" href="/img/icon-192.png" />
@@ -20,7 +20,7 @@
     <div class="login-card">
       <div class="login-head">
         <img src="/img/cipes-logo.png" class="brand-logo" alt="CIPES" />
-        <span class="brand-sub" id="login-event">Delegate Credential</span>
+        <span class="brand-sub" id="login-event">YEF Frankfurt 2026</span>
       </div>
       <div class="login-perf"></div>
       <div class="login-body">
@@ -111,7 +111,7 @@
               <div class="pass-title" id="pass-title">Welcome</div>
               <div class="pass-sub" id="pass-sub"></div>
             </div>
-            <div class="seal pass-seal"><span>YEF<br>2026</span></div>
+            <div class="seal pass-seal"><span>YEF<br>FRA<br>2026</span></div>
           </div>
           <div class="pass-perf"></div>
           <div class="pass-bottom" id="pass-fields"></div>
@@ -137,6 +137,20 @@
             </div>
             <div class="section-label">Latest update</div>
             <div id="dash-update" class="card"></div>
+            <!-- PWA install prompt — shown only when browser supports it and user hasn't dismissed -->
+            <div id="pwa-install-banner" class="pwa-install-banner" style="display:none">
+              <div class="pwa-install-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13M8 11l4 4 4-4"/><path d="M4 17v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1"/></svg>
+              </div>
+              <div class="pwa-install-text">
+                <strong>Add to Home Screen</strong>
+                <span>Access the app instantly without opening a browser</span>
+              </div>
+              <div class="pwa-install-actions">
+                <button class="btn brass small" id="btn-pwa-install">Install</button>
+                <button class="btn ghost small" id="btn-pwa-dismiss">Later</button>
+              </div>
+            </div>
           </section>
 
           <!-- RUNDOWN -->

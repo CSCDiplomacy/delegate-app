@@ -279,17 +279,21 @@
           ${it.gather_time ? `<div class="t-gather">Gather ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
             ${map ? `<a class="chip" href="${map}" target="_blank" rel="noopener">${ic(P.mapPin,12)}Open in Maps</a>` : ''}
-            <a class="chip" href="${icsHref(day, it)}" download="${esc(it.title)}.ics">${ic(P.calendar,12)}Add to calendar</a>
+            <a class="chip" href="${icsHref(day, it)}" target="_blank" rel="noopener">${ic(P.calendar,12)}Add to calendar</a>
           </div>
         </div>
       </div>`;
     }).join('');
   }
   function icsHref(day, it) {
-    const dt = day.date.replace(/-/g, ''); const [h, m] = it.time.split(':');
-    const e = toMin(it.time) + 60; const eh = String(Math.floor(e / 60) % 24).padStart(2, '0'); const em = String(e % 60).padStart(2, '0');
-    const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//CIPES//Delegate//EN', 'BEGIN:VEVENT', `DTSTART:${dt}T${h}${m}00`, `DTEND:${dt}T${eh}${em}00`, `SUMMARY:${it.title}`, `LOCATION:${it.venue || ''}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
-    return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(body);
+    const p = new URLSearchParams({
+      title: it.title,
+      date: day.date,
+      time: it.time,
+      venue: it.venue || '',
+      duration: String(it.duration_min || 60),
+    });
+    return '/api/ics?' + p.toString();
   }
   async function toggleFav(id, btn) {
     const adding = !favourites.has(id);
@@ -457,6 +461,24 @@
   function showModal(t, b) { el('modal-title').textContent = t; el('modal-body').textContent = b; el('modal-overlay').classList.add('show'); }
   function closeModal() { el('modal-overlay').classList.remove('show'); }
 
+  /* ===================== PWA INSTALL ===================== */
+  let _pwaPrompt = null;
+  const PWA_DISMISS_KEY = 'cipes_pwa_dismissed';
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    _pwaPrompt = e;
+    if (!localStorage.getItem(PWA_DISMISS_KEY)) {
+      const banner = el('pwa-install-banner');
+      if (banner) banner.style.display = 'flex';
+    }
+  });
+
+  // Hide banner if app is already installed (standalone mode)
+  if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
+    localStorage.setItem(PWA_DISMISS_KEY, '1');
+  }
+
   /* ===================== EVENTS ===================== */
   function wire() {
     el('btn-login').onclick = doLogin;
@@ -475,6 +497,21 @@
     el('btn-menu').onclick = () => openDrawer(el('menu-drawer'));
     $$('.js-menu-close').forEach((b) => b.onclick = closeDrawers);
     el('backdrop').onclick = closeDrawers;
+
+    const btnInstall = el('btn-pwa-install');
+    const btnDismiss = el('btn-pwa-dismiss');
+    if (btnInstall) btnInstall.onclick = async () => {
+      if (!_pwaPrompt) return;
+      _pwaPrompt.prompt();
+      const { outcome } = await _pwaPrompt.userChoice;
+      _pwaPrompt = null;
+      if (outcome === 'accepted') localStorage.setItem(PWA_DISMISS_KEY, '1');
+      el('pwa-install-banner').style.display = 'none';
+    };
+    if (btnDismiss) btnDismiss.onclick = () => {
+      localStorage.setItem(PWA_DISMISS_KEY, '1');
+      el('pwa-install-banner').style.display = 'none';
+    };
 
     document.addEventListener('click', (e) => {
       const go = e.target.closest('[data-goto]'); if (go) { switchScreen(go.dataset.goto); closeDrawers(); return; }

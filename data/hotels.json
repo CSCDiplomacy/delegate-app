@@ -5,7 +5,7 @@
       "name": "Pullman Jakarta Central Park",
       "address": "Podomoro City, Jl. Letjen S. Parman, Jakarta Barat 11470",
       "map": "-6.177900,106.790600",
-      "wifi": "Network: CSCD-Delegate · Password: jakarta2026",
+      "wifi": "Network: CIPES-Delegate · Password: jakarta2026",
       "transport": [
         { "label": "From Soekarno-Hatta Airport (taxi)", "value": "~45–60 min, ~Rp 200k" },
         { "label": "Airport shuttle", "value": "Gate B, hourly 08:00–20:00" },
@@ -13,21 +13,21 @@
       ],
       "contacts": [
         { "label": "Hotel front desk", "value": "+62 21 2920 0088", "type": "phone" },
-        { "label": "CSCD on-site coordinator", "value": "+62 811 1000 200", "type": "phone" }
+        { "label": "CIPES on-site coordinator", "value": "+62 811 1000 200", "type": "phone" }
       ]
     },
     "aryaduta-menteng": {
       "name": "Hotel Aryaduta Menteng",
       "address": "Jl. Prajurit KKO Usman dan Harun No.44-48, Jakarta Pusat 10110",
       "map": "-6.180700,106.834500",
-      "wifi": "Network: CSCD-Delegate · Password: jakarta2026",
+      "wifi": "Network: CIPES-Delegate · Password: jakarta2026",
       "transport": [
         { "label": "From Soekarno-Hatta Airport (taxi)", "value": "~50–70 min, ~Rp 220k" },
         { "label": "Nearest station", "value": "Gondangdia (8 min walk)" }
       ],
       "contacts": [
         { "label": "Hotel front desk", "value": "+62 21 2352 1234", "type": "phone" },
-        { "label": "CSCD on-site coordinator", "value": "+62 811 1000 200", "type": "phone" }
+        { "label": "CIPES on-site coordinator", "value": "+62 811 1000 200", "type": "phone" }
       ]
     }
   }

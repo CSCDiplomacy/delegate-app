@@ -1,7 +1,7 @@
 {
-  "name": "CIPES Delegate App",
-  "short_name": "CIPES",
-  "description": "Your CIPES event — rundown, visits, speakers, hotel & updates in one place.",
+  "name": "YEF Frankfurt 2026",
+  "short_name": "YEF FRA",
+  "description": "CIPES YEF Frankfurt 2026 — rundown, visits, speakers, hotel & updates in one place.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
