@@ -1,4 +1,4 @@
-/* CSCD Delegate App — front-end controller (Credential / boarding-pass theme).
+/* CIPES Delegate App — front-end controller (Credential / boarding-pass theme).
    No framework, no build step. Supabase Auth in the browser (anon key) + the
    app's own JSON/Supabase API. Responsive: mobile drawers / desktop 3-col. */
 (function () {
@@ -7,8 +7,8 @@
   let sb = null, session = null, config = {};
   let rundown = null, speakers = [], profile = {}, hotelData = null;
   let favourites = new Set();
-  const READ_KEY = 'cscd_read_notifications';
-  const THEME_KEY = 'cscd_theme';
+  const READ_KEY = 'cipes_read_notifications';
+  const THEME_KEY = 'cipes_theme';
 
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => Array.from(document.querySelectorAll(s));
@@ -71,7 +71,7 @@
   /* ===================== AUTH ===================== */
   async function initSupabase() {
     config = await getJson('/api/config');
-    const ev = config.eventName && config.eventName !== 'CSCD Delegate App' ? config.eventName : 'Jakarta 2026';
+    const ev = config.eventName && config.eventName !== 'CIPES Delegate App' ? config.eventName : 'Frankfurt 2026';
     ['side-event', 'top-event'].forEach((id) => { if (el(id)) el(id).textContent = ev; });
     if (!config.supabaseUrl || !config.supabaseAnonKey) {
       el('login-msg').textContent = 'Auth not configured yet.'; el('login-msg').className = 'form-msg error'; return;
@@ -130,8 +130,8 @@
   async function loadProfile() { try { profile = await api('/me/profile'); } catch (e) { profile = { name: 'Delegate' }; } }
   async function loadRundown() { try { rundown = await getJson('/api/rundown'); } catch (e) { rundown = { days: [] }; } }
   async function loadHotel() { try { hotelData = await api('/me/hotel'); } catch (e) { hotelData = null; } }
-  function saveFavsLocal() { localStorage.setItem('cscd_favs', JSON.stringify([...favourites])); }
-  function loadFavsLocal() { try { return new Set(JSON.parse(localStorage.getItem('cscd_favs') || '[]')); } catch (e) { return new Set(); } }
+  function saveFavsLocal() { localStorage.setItem('cipes_favs', JSON.stringify([...favourites])); }
+  function loadFavsLocal() { try { return new Set(JSON.parse(localStorage.getItem('cipes_favs') || '[]')); } catch (e) { return new Set(); } }
   async function loadFavourites() {
     favourites = loadFavsLocal();
     try { const { favourites: f } = await api('/favourites'); favourites = new Set((f || []).map((x) => x.session_id)); saveFavsLocal(); } catch (e) {}
@@ -163,7 +163,7 @@
   }
   function renderPass(name) {
     const nm = profile.name || 'Delegate';
-    const tz = (rundown && rundown.timezone) || 'Asia/Jakarta';
+    const tz = (rundown && rundown.timezone) || 'Europe/Berlin';
     const today = tzNow(tz);
     const dayIdx = rundown && rundown.days ? rundown.days.findIndex((d) => d.date === today.date) : -1;
     const dayLabel = dayIdx >= 0 ? rundown.days[dayIdx].label : '—';
@@ -174,7 +174,7 @@
       dashboard: ['Delegate credential', nm, '', [['Delegate ID', fid], ['Hotel', room ? `${hotelName.split(' ')[0]} · ${room}` : hotelName], ['Status', dayIdx >= 0 ? `${dayLabel} · Live` : 'Event soon', true]]],
       rundown: ['Programme', `${dayLabel} Rundown`, '"The week, hour by hour."', [['Days', rundown && rundown.days ? String(rundown.days.length) : '—'], ['Timezone', (tz || '').replace('Asia/', '')], ['You are', nm.split(' ')[0], true]]],
       visits: ['Institutional visits', 'Visits & Programs', '"Where the delegation calls on the city."', [['Scope', 'All delegates'], ['Maps', 'Tap to open'], ['Status', 'See list', true]]],
-      speakers: ['Voices of CSCD', 'Speakers', '"The people behind the sessions."', [['Sessions', 'Linked to rundown'], ['Tap', 'For bios'], ['You are', nm.split(' ')[0], true]]],
+      speakers: ['CIPES Speakers', 'Speakers', '"The people behind the sessions."', [['Sessions', 'Linked to rundown'], ['Tap', 'For bios'], ['You are', nm.split(' ')[0], true]]],
       hotel: ['Your stay', hotelName, '"Your base for the week."', [['Room', room || '—'], ['Booking', hotelData && hotelData.delegate ? (hotelData.delegate.booking_ref || '—') : '—'], ['Check-out', hotelData && hotelData.delegate ? (hotelData.delegate.check_out || '—') : '—', true]]],
       contact: ['Coordination', 'Contact us', '"We are here to help."', [['Reach', 'Email or call'], ['Venue', 'Open in Maps'], ['Feedback', 'Welcome', true]]],
       schedule: ['My Programme', 'My Schedule', '"Sessions you starred."', [['Starred', favourites.size ? `${favourites.size} session${favourites.size !== 1 ? 's' : ''}` : 'None yet'], ['Source', 'Rundown ☆'], ['Type', 'Personal only', true]]],
@@ -190,7 +190,7 @@
   /* ===================== DASHBOARD ===================== */
   function findNext() {
     if (!rundown || !rundown.days) return null;
-    const tz = rundown.timezone || 'Asia/Jakarta'; const { date, minutes } = tzNow(tz);
+    const tz = rundown.timezone || 'Europe/Berlin'; const { date, minutes } = tzNow(tz);
     for (const day of rundown.days) {
       if (day.date < date) continue;
       for (const it of day.items || []) if (day.date > date || toMin(it.time) >= minutes) return { day, it };
@@ -199,7 +199,7 @@
   }
   function findNow() {
     if (!rundown || !rundown.days) return null;
-    const tz = rundown.timezone || 'Asia/Jakarta'; const { date, minutes } = tzNow(tz);
+    const tz = rundown.timezone || 'Europe/Berlin'; const { date, minutes } = tzNow(tz);
     for (const day of rundown.days) {
       if (day.date !== date) continue;
       const its = day.items || [];
@@ -219,7 +219,7 @@
     // up next (next 2 items)
     const ups = [];
     if (rundown && rundown.days) {
-      const tz = rundown.timezone || 'Asia/Jakarta'; const { date, minutes } = tzNow(tz); let count = 0;
+      const tz = rundown.timezone || 'Europe/Berlin'; const { date, minutes } = tzNow(tz); let count = 0;
       for (const day of rundown.days) {
         if (day.date < date) continue;
         for (const it of day.items || []) {
@@ -259,7 +259,7 @@
     if (!rundown || !rundown.days || !rundown.days.length) {
       el('timeline').innerHTML = '<div class="empty">Agenda coming soon.</div>'; el('day-tabs').innerHTML = ''; return;
     }
-    const tz = rundown.timezone || 'Asia/Jakarta'; const { date, minutes } = tzNow(tz);
+    const tz = rundown.timezone || 'Europe/Berlin'; const { date, minutes } = tzNow(tz);
     if (!renderRundown._init) { const i = rundown.days.findIndex((d) => d.date === date); activeDay = i >= 0 ? i : 0; renderRundown._init = true; }
     el('day-tabs').innerHTML = rundown.days.map((d, i) => `<button class="day-tab ${i === activeDay ? 'active' : ''}" data-day="${i}">${esc(d.label)}</button>`).join('');
     const day = rundown.days[activeDay]; const isToday = day.date === date;
@@ -288,7 +288,7 @@
   function icsHref(day, it) {
     const dt = day.date.replace(/-/g, ''); const [h, m] = it.time.split(':');
     const e = toMin(it.time) + 60; const eh = String(Math.floor(e / 60) % 24).padStart(2, '0'); const em = String(e % 60).padStart(2, '0');
-    const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//CSCD//Delegate//EN', 'BEGIN:VEVENT', `DTSTART:${dt}T${h}${m}00`, `DTEND:${dt}T${eh}${em}00`, `SUMMARY:${it.title}`, `LOCATION:${it.venue || ''}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//CIPES//Delegate//EN', 'BEGIN:VEVENT', `DTSTART:${dt}T${h}${m}00`, `DTEND:${dt}T${eh}${em}00`, `SUMMARY:${it.title}`, `LOCATION:${it.venue || ''}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
     return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(body);
   }
   async function toggleFav(id, btn) {
@@ -369,7 +369,7 @@
     try {
       const c = await getJson('/api/contact'); const map = mapsLink((c.venue && (c.venue.map || c.venue.address)) || '');
       const link = (x) => x.type === 'email' ? `mailto:${esc(x.value)}` : x.type === 'phone' ? `tel:${esc(x.value)}` : esc(x.value);
-      let html = `<div class="tile"><div class="tile-title">${esc(c.org || 'CSCD')}</div>`;
+      let html = `<div class="tile"><div class="tile-title">${esc(c.org || 'CIPES')}</div>`;
       if (c.venue) html += `<div class="tile-body">${esc(c.venue.name || '')}<br>${esc(c.venue.address || '')}</div>${map ? `<div class="t-actions" style="margin-top:12px"><a class="chip primary" href="${map}" target="_blank" rel="noopener">Open in Maps</a></div>` : ''}`;
       html += `</div>`;
       const cIcons = { email: P.mail, phone: P.phone, whatsapp: P.phone };
@@ -425,7 +425,7 @@
   const setRead = (s) => localStorage.setItem(READ_KEY, JSON.stringify([...s]));
   function computeReminders() {
     if (!rundown || !rundown.days) return [];
-    const tz = rundown.timezone || 'Asia/Jakarta'; const { date, minutes } = tzNow(tz); const out = [];
+    const tz = rundown.timezone || 'Europe/Berlin'; const { date, minutes } = tzNow(tz); const out = [];
     for (const day of rundown.days) { if (day.date !== date) continue; for (const it of day.items || []) { if (!it.notify) continue; const d = toMin(it.time) - minutes; if (d > 0 && d <= 60) out.push({ id: `rem-${day.date}T${it.time}`, title: `Starting soon: ${it.title}`, body: `${fmt12(it.time)} at ${it.venue || 'the venue'}${it.gather_time ? ` — gather ${fmt12(it.gather_time)}` : ''}.`, created_at: new Date().toISOString(), kind: 'reminder' }); } }
     return out;
   }

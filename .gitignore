@@ -13,3 +13,12 @@ npm-debug.log*
 
 # Credential output from seed-delegates.js (delegate passwords)
 *credentials*.csv
+
+# Reference / mockup HTML files (local dev only, not for the server)
+frankfurtLandingPage.html
+newtheme.html
+cscd_delegate_app.html
+
+# Source logo files (processed versions live in public/img/)
+CIPES Logo.png
+CSCD-logo-0155.png

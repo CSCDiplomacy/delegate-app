@@ -1,4 +1,4 @@
-/* CSCD Delegate App — service worker.
+/* CIPES Delegate App — service worker.
    Strategy:
    - App shell + static assets: cache-first (so the app opens on poor wifi).
    - Static event JSON (/api/rundown, /api/visits, /api/speakers, /api/checkin,
