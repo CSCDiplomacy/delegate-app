@@ -106,7 +106,12 @@
   async function loadProfile() { try { profile = await api('/me/profile'); } catch (e) { profile = { name: 'Delegate' }; } }
   async function loadRundown() { try { rundown = await getJson('/api/rundown'); } catch (e) { rundown = { days: [] }; } }
   async function loadHotel() { try { hotelData = await api('/me/hotel'); } catch (e) { hotelData = null; } }
-  async function loadFavourites() { try { const { favourites: f } = await api('/favourites'); favourites = new Set((f || []).map((x) => x.session_id)); } catch (e) { favourites = new Set(); } }
+  function saveFavsLocal() { localStorage.setItem('cscd_favs', JSON.stringify([...favourites])); }
+  function loadFavsLocal() { try { return new Set(JSON.parse(localStorage.getItem('cscd_favs') || '[]')); } catch (e) { return new Set(); } }
+  async function loadFavourites() {
+    favourites = loadFavsLocal();
+    try { const { favourites: f } = await api('/favourites'); favourites = new Set((f || []).map((x) => x.session_id)); saveFavsLocal(); } catch (e) {}
+  }
 
   /* ===================== NAV + PASS HERO ===================== */
   let current = 'dashboard';
@@ -123,6 +128,7 @@
     if (name === 'visits' && !rendered.visits) renderVisits();
     if (name === 'speakers') renderSpeakers();
     if (name === 'hotel') renderHotel();
+    if (name === 'schedule') renderSchedule();
     if (name === 'contact' && !rendered.contact) renderContact();
     if (window.innerWidth < 960) window.scrollTo(0, 0);
   }
@@ -147,6 +153,7 @@
       speakers: ['Voices of CSCD', 'Speakers', '"The people behind the sessions."', [['Sessions', 'Linked to rundown'], ['Tap', 'For bios'], ['You are', nm.split(' ')[0], true]]],
       hotel: ['Your stay', hotelName, '"Your base for the week."', [['Room', room || '—'], ['Booking', hotelData && hotelData.delegate ? (hotelData.delegate.booking_ref || '—') : '—'], ['Check-out', hotelData && hotelData.delegate ? (hotelData.delegate.check_out || '—') : '—', true]]],
       contact: ['Coordination', 'Contact us', '"We are here to help."', [['Reach', 'Email or call'], ['Venue', 'Open in Maps'], ['Feedback', 'Welcome', true]]],
+      schedule: ['My Programme', 'My Schedule', '"Sessions you starred."', [['Starred', favourites.size ? `${favourites.size} session${favourites.size !== 1 ? 's' : ''}` : 'None yet'], ['Source', 'Rundown ☆'], ['Type', 'Personal only', true]]],
     };
     const s = sets[name] || sets.dashboard;
     el('pass-eyebrow').textContent = s[0];
@@ -210,6 +217,8 @@
       el('dash-hotel').innerHTML = `<div class="card-eyebrow">Your hotel<span class="link">View →</span></div><div class="next-venue">Details coming soon.</div>`;
     }
     el('dash-contact').innerHTML = `<div class="card-eyebrow">Contact &amp; support<span class="link">Open →</span></div><div class="next-venue">Coordination team, venue map, feedback.</div>`;
+    const sc = favourites.size;
+    if (el('dash-schedule')) el('dash-schedule').innerHTML = `<div class="card-eyebrow">My programme<span class="link">View →</span></div><div class="next-venue">${sc > 0 ? `★ ${sc} session${sc !== 1 ? 's' : ''} starred` : 'No sessions starred yet — tap ☆ in the Rundown.'}</div>`;
     // latest announcement
     el('dash-update').innerHTML = `<div class="ann-title">Latest update</div><div class="ann-body" id="dash-ann">—</div>`;
     api('/announcements').then(({ announcements }) => {
@@ -259,9 +268,13 @@
     return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(body);
   }
   async function toggleFav(id, btn) {
+    const adding = !favourites.has(id);
+    if (adding) { favourites.add(id); btn.textContent = '★'; } else { favourites.delete(id); btn.textContent = '☆'; }
+    saveFavsLocal();
+    if (current === 'schedule') renderSchedule();
     try {
-      if (favourites.has(id)) { await api('/favourites/' + encodeURIComponent(id), { method: 'DELETE' }); favourites.delete(id); btn.textContent = '☆'; }
-      else { await api('/favourites', { method: 'POST', body: JSON.stringify({ session_id: id }) }); favourites.add(id); btn.textContent = '★'; }
+      if (adding) await api('/favourites', { method: 'POST', body: JSON.stringify({ session_id: id }) });
+      else await api('/favourites/' + encodeURIComponent(id), { method: 'DELETE' });
     } catch (e) {}
   }
 
@@ -347,6 +360,41 @@
     catch (e) { m.textContent = 'Could not send right now.'; m.className = 'form-msg error'; }
   }
 
+  /* ===================== MY SCHEDULE ===================== */
+  function renderSchedule() {
+    const root = el('schedule-content');
+    if (!rundown || !rundown.days) { root.innerHTML = schedEmpty(); return; }
+    const groups = rundown.days.reduce((acc, day) => {
+      const items = (day.items || []).filter((it) => favourites.has(`${day.date}T${it.time}`));
+      if (items.length) acc.push({ day, items });
+      return acc;
+    }, []);
+    if (!groups.length) { root.innerHTML = schedEmpty(); return; }
+    const total = groups.reduce((n, g) => n + g.items.length, 0);
+    let html = `<div class="sched-meta-row"><span class="sched-count-badge">★ ${total} session${total !== 1 ? 's' : ''}</span> across ${groups.length} day${groups.length !== 1 ? 's' : ''}</div>`;
+    for (const { day, items } of groups) {
+      html += `<div class="sched-day-section"><div class="sched-day-head"><span class="sched-day-label">${esc(day.label)}</span><span class="sched-day-date">${esc(day.date)}</span></div>`;
+      for (const it of items) {
+        const id = `${day.date}T${it.time}`; const s = split12(it.time);
+        const isBrass = brassTypes.includes((it.type || '').toLowerCase());
+        html += `<div class="sched-row">
+          <div class="sched-time">${esc(s.hm)}<small>${esc(s.ap)}</small></div>
+          <div class="sched-body">
+            <span class="${isBrass ? 't-type' : 't-type subtle'}" style="font-size:.65rem;padding:2px 7px">${esc(it.type || 'item')}</span>
+            <div class="sched-title">${esc(it.title)}</div>
+            ${it.venue ? `<div class="sched-venue">${esc(it.venue)}</div>` : ''}
+          </div>
+          <button class="sched-remove star-btn" data-fav="${esc(id)}" title="Remove from My Schedule">★</button>
+        </div>`;
+      }
+      html += '</div>';
+    }
+    root.innerHTML = html;
+  }
+  function schedEmpty() {
+    return `<div class="sched-empty"><span class="sched-empty-icon">☆</span><p>Your personal schedule is empty.</p><small>Tap ☆ next to any session in the <b>Rundown</b> to add it here.</small></div>`;
+  }
+
   /* ===================== NOTIFICATIONS ===================== */
   const getRead = () => { try { return new Set(JSON.parse(localStorage.getItem(READ_KEY) || '[]')); } catch (e) { return new Set(); } };
   const setRead = (s) => localStorage.setItem(READ_KEY, JSON.stringify([...s]));
@@ -411,7 +459,30 @@
     });
   }
 
-  if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+  if ('serviceWorker' in navigator) {
+    // Self-updating: when a new worker takes control, reload once so fresh
+    // HTML/CSS/JS show immediately (no manual hard-refresh needed).
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+    window.addEventListener('load', async () => {
+      try {
+        const reg = await navigator.serviceWorker.register('/sw.js');
+        reg.update();
+        // If a new worker is already waiting, ask it to activate now.
+        if (reg.waiting) reg.waiting.postMessage('skip-waiting');
+        reg.addEventListener('updatefound', () => {
+          const nw = reg.installing;
+          if (nw) nw.addEventListener('statechange', () => {
+            if (nw.state === 'installed' && reg.waiting) reg.waiting.postMessage('skip-waiting');
+          });
+        });
+      } catch (e) { /* ignore */ }
+    });
+  }
 
   wire();
   initSupabase();

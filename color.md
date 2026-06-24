@@ -1,42 +1,42 @@
-# CSCD Delegate App — Color Scheme
+# CSCD Delegate App — Color Scheme & Theme
 
-Palette extracted from the YPDS Jakarta 2026 page (`thecscd.org/ypds-jakarta-2026`).
-**The app uses a minimalist diplomacy aesthetic** — warm cream + near-black, generous
-whitespace and hairline rules, with the palette accents applied sparingly. (The source
-page is maximalist; we keep its *colours*, not its heavy styling.)
+**Active theme: "Credential / boarding-pass" edition** (see `newtheme.html` for the original mock). Warm *paper* + near-black *ink* with a **brass** seal accent and a **pink "signal"** highlight. Supports **light and dark mode** (toggle persisted in `localStorage` as `cscd_theme`). This supersedes the earlier cream/electric-yellow extraction.
 
-## Core palette
+Aesthetic: an editorial diplomatic "delegate credential" — a boarding-pass hero card, brass wax-seal motifs, hairline rules, soft shadows.
 
-| Token            | Hex       | Role |
-|------------------|-----------|------|
-| `--ink`          | `#050505` | Primary near-black — main text, dark backgrounds |
-| `--ink-soft`     | `#0A0A0A` | Secondary black surfaces |
-| `--charcoal`     | `#2C2825` | Warm dark brown — body text, borders |
-| `--cream`        | `#F9F6F0` | Primary warm off-white background |
-| `--white`        | `#FFFFFF` | Cards / pure white surfaces |
-| `--yellow`       | `#E6EB1C` | **Primary accent** — chartreuse/electric yellow. Highlights, active states, hard offset shadows, CTAs |
-| `--pink`         | `#EA0558` | **Secondary accent — USE SPARINGLY.** Rare emphasis only. Must NOT make the app feel "pink". |
+## Core palette (light)
 
-## Accent rule
-- **Primary accent = yellow `#E6EB1C`, used sparingly.** Reserve it for restrained touches — the active bottom-nav indicator, one CTA, a slim "now" marker, a soft text highlight (`box-shadow: inset 0 -0.4em 0 rgba(230,235,28,0.45)`), keynote/visit badge tints. Most surfaces stay cream/white/ink.
-- **Pink `#EA0558` is a single signal, not a base.** In the minimalist build it is used essentially once — the small unread dot on the notification bell / Updates items (and inline form errors). It must NOT make the app feel "pink".
+| Token | Hex | Role |
+|-------|-----|------|
+| `--paper` | `#FBF7EF` | App background |
+| `--paper-soft` | `#F2ECDD` | Secondary surface / toggles |
+| `--ink` | `#1B1812` | Primary text / dark seals |
+| `--ink-soft` | `#4A4438` | Secondary text |
+| `--surface` | `#FFFFFF` | Cards |
+| `--surface-2` | `#161310` | Boarding-pass hero / login card (dark on light) |
+| `--brass` | `#C9A227` | **Primary accent** — seals, type badges, guide numbers, brass CTA |
+| `--brass-deep` | `#9C7B17` | Brass gradient / star icons |
+| `--signal` | `#FF2D6B` | **Live / alert accent** — "happening now", live strip, unread dots, primary CTA, active nav |
+| `--signal-deep` | `#C7124C` | Signal text on light |
+| `--hairline` | `rgba(27,24,18,0.14)` | Dividers / card borders |
 
-## Minimalist styling rules
-- **No heavy/offset block shadows.** Use hairline borders (`rgba(5,5,5,0.10)`) and at most a very soft shadow (`0 1px 2px rgba(5,5,5,0.05)`) on cards.
-- Rounded corners (8–14px), pill badges/tabs, lots of whitespace, lighter Cinzel weights (400/600).
-- Separators are 1px hairlines, not thick borders.
+## Dark mode
+`[data-theme="dark"]` on `<html>` swaps the tokens: paper → `#15120E`, ink → `#F7F1E4`, surface → `#221E17`, brass → `#E8C158`, signal → `#FF4F84`, with deeper shadows. All components read from the CSS variables, so nothing else changes.
 
-## Supporting (from rgba usage)
-- Lines / dividers: `rgba(5,5,5,0.10)`, `rgba(5,5,5,0.16)`
-- Soft card shadow: `0 1px 2px rgba(5,5,5,0.05)`
-- Scrims (overlays): `rgba(5,5,5,0.35)`–`rgba(5,5,5,0.45)`
+## Accent rules
+- **Brass `--brass`** = the "official document" accent: the wax seals, rundown type badges, guided-check-in step numbers, secondary CTA.
+- **Signal pink `--signal`** = anything *live or urgent*: the "happening now" strip, the live pill + now-marker on the rundown, unread notification dots, the primary action button, and the active nav state. Use it for emphasis, not as a fill everywhere.
+- Most surfaces stay paper/ink; brass and signal are punctuation.
 
-## Typography
-Loaded from Google Fonts on the source page:
-- **Cinzel** (400/600/700/800) — display / headings. Elegant, classical, diplomatic.
-- **Cormorant Garamond** (400/600, + italic) — serif accents / quotes / subtitles.
-- **Lato** (300/400/700) — body / UI text.
+## Typography (unchanged)
+- **Cinzel** (400–700) — display / headings / seals.
+- **Cormorant Garamond** (italic 500) — boarding-pass subtitle / quotes.
+- **Lato** (400–900) — body / UI.
 
 ```
-fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap
+fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,500&family=Lato:wght@400;500;600;700;800;900&display=swap
 ```
+
+## Layout note
+- **Mobile:** stacked screens, sticky topbar, bottom nav, slide-in drawers (Updates from the right, Menu from the left).
+- **Desktop (≥960px):** a real 3-column website — **sidebar** (brand, vertical nav, theme toggle, sign-out) · **main canvas** (boarding-pass hero + screen content) · **right rail** (always-visible Updates feed, not a drawer).

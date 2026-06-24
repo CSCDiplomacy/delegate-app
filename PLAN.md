@@ -7,8 +7,9 @@ Mobile-first web app (runs in any browser, behaves like an app), for an ongoing 
 
 ## 1. Goal & constraints
 
-- A **Node.js web app** opened in a browser on mobile (primary) and laptop. Installable as a PWA ("Add to Home Screen") so it feels like an app — **not** a native app-store build (this constrains notifications; see §6b).
-- Clean **minimalist** UI using the Jakarta 2026 palette (see [color.md](color.md)).
+- A **Node.js web app** opened in a browser on mobile and laptop. Installable as a PWA ("Add to Home Screen") so it feels like an app — **not** a native app-store build (this constrains notifications; see §6b).
+- **Responsive:** mobile = app-like (stacked screens, bottom nav, drawers); **desktop = a real 3-column website** (sidebar · main canvas · always-visible right-rail Updates).
+- **"Credential / boarding-pass" theme** with **light + dark mode** (see [color.md](color.md) and `newtheme.html`): paper + ink, brass seal accent, pink "signal" highlight.
 - **Bottom-nav tabs (5):** Dashboard · Rundown · Institutional Visits · Speakers · Hotel & Check-in. **Contact** and **Sign out** live in a **header hamburger menu** (declutters the bottom bar); a **notifications bell** (Updates feed) also sits in the header on every screen.
 - Static event content lives in JSON; the dynamic parts are **auth, the logged-in delegate's hotel/check-in data, announcements, and in-app notifications**.
 - Deploys to **Hostinger (WordPress Business) Node.js hosting on a CSCD subdomain**.
@@ -64,7 +65,7 @@ delegate_app/
 
 ## 4. Surfaces (tabs + notifications)
 
-Bottom nav holds the 5 primary tabs; the header carries a **notification bell** (Facebook-style: unread dot → opens the Updates panel as a right-side overlay) and a **hamburger menu** (left-side slide-in panel) holding **Contact us**, a CSCD website link, and **Sign out**. Contact remains a full screen — the menu just navigates to it.
+**Mobile:** a bottom nav holds the 5 primary tabs; the topbar carries a theme toggle, a **notification bell** (unread dot → Updates drawer from the right) and a **hamburger menu** (left drawer) holding **Contact us**, a CSCD website link, and **Sign out**. **Desktop (≥960px):** a left **sidebar** holds the full nav (incl. Contact), theme toggle and Sign out, and the **Updates feed is an always-visible right rail** (no bell needed). Contact is a full screen in both layouts.
 
 1. **Dashboard** (post-login landing) — personalized for the delegate: greeting by name, **hotel summary**, **today's rundown at a glance** (next item highlighted), a **check-in CTA**, and the latest announcement. The "all your info in one place" welcome screen the client described.
 2. **Rundown** — the core. A clean **vertical time-block timeline** for each day (`02:00 PM`, `02:30 PM`, `03:00 PM`…), each item: title, venue, type badge, optional "gather at" time. Day tabs. Live **Now/Next** highlight. Source: `rundown.json`.
@@ -102,13 +103,14 @@ Server uses the **service-role key** (never exposed to the browser) for `seed-de
 
 Notes: the **rundown** and **institutional visits** are static JSON (not DB tables) — fast and editable by file. **Auto-reminders are computed from the rundown**, not stored as rows. The bell's **read/unread state is kept per device in `localStorage`** (no table needed now; can move to Supabase later if cross-device sync is wanted).
 
-## 6. Design language (minimalist, professional)
+## 6. Design language ("credential / boarding-pass", professional)
 
-- Base: cream `#F9F6F0` + near-black `#050505`/charcoal `#2C2825`, lots of whitespace.
-- **Accent: electric yellow `#E6EB1C`, used sparingly** — the active bottom-nav indicator, one CTA, a slim "now" marker on the rundown, a soft inset text highlight, keynote/visit badge tints. Most surfaces stay cream/white/ink.
-- **Pink `#EA0558` as a single signal** — essentially just the small unread dot on the bell / Updates items (and inline form errors). The app must read professional, not "pink".
-- Type: **Cinzel** display headings (lighter 400/600 weights), **Cormorant Garamond** serif accents/quotes, **Lato** body/UI.
-- Minimalism via whitespace, **hairline 1px dividers**, rounded corners, pill badges/tabs, and at most a very soft card shadow — **no heavy/offset block shadows**. Mobile-first, large tap targets, sticky bottom tab bar.
+- Theme + tokens live in [color.md](color.md); reference mock is `newtheme.html`. **Light + dark mode**, toggle persisted in `localStorage`.
+- Base: **paper `#FBF7EF`** + **ink `#1B1812`**; cards on white; the hero + login use the dark `--surface-2`.
+- **Brass `#C9A227`** = the "official document" accent (wax seals, rundown type badges, check-in step numbers, secondary CTA). **Pink "signal" `#FF2D6B`** = live/urgent only (happening-now strip, live pill + now-marker, unread dots, primary CTA, active nav).
+- Signature element: a **boarding-pass hero** that re-skins per screen (delegate name/credential on Dashboard, day summary on Rundown, room on Hotel, etc.).
+- Type: **Cinzel** display/seals, **Cormorant Garamond** italic for the pass subtitle, **Lato** body/UI.
+- Soft shadows + hairline dividers + rounded corners. **Responsive:** mobile (bottom nav + drawers) ⇄ desktop ≥960px (sidebar · main · right rail).
 
 ## 6b. Notifications & reminders (phased)
 

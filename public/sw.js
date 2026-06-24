@@ -6,7 +6,7 @@
      available offline).
    - Auth + per-user + dynamic endpoints (/api/me, /api/config, /api/favourites,
      /api/announcements, /api/feedback, Supabase): always network, never cached. */
-const CACHE = 'cscd-v2';
+const CACHE = 'cscd-v4';
 const SHELL = [
   '/',
   '/index.html',
@@ -21,6 +21,11 @@ const STATIC_API = ['/api/rundown', '/api/visits', '/api/speakers', '/api/checki
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+});
+
+// Allow the page to trigger an immediate takeover of a waiting worker.
+self.addEventListener('message', (e) => {
+  if (e.data === 'skip-waiting') self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
