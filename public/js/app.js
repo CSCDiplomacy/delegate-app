@@ -19,6 +19,30 @@
   }
   function mapsLink(q) { return q ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}` : null; }
 
+  /* ---- SVG icon paths (24×24 Feather-style) ---- */
+  const P = {
+    mapPin:   '<path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+    calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+    mic:      '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/>',
+    coffee:   '<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="5"/><line x1="10" y1="2" x2="10" y2="5"/><line x1="14" y1="2" x2="14" y2="5"/>',
+    users:    '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    wrench:   '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+    chat:     '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    award:    '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>',
+    clock:    '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    mail:     '<path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+    phone:    '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/>',
+    globe:    '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+    building: '<rect x="4" y="2" width="16" height="20" rx="1"/><path d="M9 22V12h6v10"/><line x1="9" y1="7" x2="11" y2="7"/><line x1="13" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="11" y2="11"/><line x1="13" y1="11" x2="15" y2="11"/>',
+    door:     '<path d="M3 22h18M5 22V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v17"/><circle cx="15" cy="12" r=".5" fill="currentColor"/>',
+    logIn:    '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>',
+    logOut:   '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
+    wifi:     '<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
+    hash:     '<line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>',
+  };
+  function ic(path, w) { return `<svg viewBox="0 0 24 24" width="${w||14}" height="${w||14}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`; }
+  function typeIcon(t) { const m={meal:P.coffee,keynote:P.mic,visit:P.mapPin,social:P.users,workshop:P.wrench,panel:P.chat,ceremony:P.award}; return ic(m[(t||'').toLowerCase()]||P.clock,10); }
+
   async function api(path, opts) {
     opts = opts || {};
     const headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
@@ -211,14 +235,14 @@
     // hotel
     if (hotelData && hotelData.hotel) {
       const d = hotelData.delegate;
-      el('dash-hotel').innerHTML = `<div class="card-eyebrow">${esc(hotelData.hotel.name)}<span class="link">Check-in →</span></div>
+      el('dash-hotel').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.building,13)}${esc(hotelData.hotel.name)}</span><span class="link">Check-in →</span></div>
         <div class="next-venue">${d.room ? 'Room ' + esc(d.room) : ''}${d.booking_ref ? ' · #' + esc(d.booking_ref) : ''}${d.check_out ? ' · out ' + esc(d.check_out) : ''}</div>`;
     } else {
-      el('dash-hotel').innerHTML = `<div class="card-eyebrow">Your hotel<span class="link">View →</span></div><div class="next-venue">Details coming soon.</div>`;
+      el('dash-hotel').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.building,13)}Your hotel</span><span class="link">View →</span></div><div class="next-venue">Details coming soon.</div>`;
     }
-    el('dash-contact').innerHTML = `<div class="card-eyebrow">Contact &amp; support<span class="link">Open →</span></div><div class="next-venue">Coordination team, venue map, feedback.</div>`;
+    el('dash-contact').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.phone,13)}Contact &amp; support</span><span class="link">Open →</span></div><div class="next-venue">Coordination team, venue map, feedback.</div>`;
     const sc = favourites.size;
-    if (el('dash-schedule')) el('dash-schedule').innerHTML = `<div class="card-eyebrow">My programme<span class="link">View →</span></div><div class="next-venue">${sc > 0 ? `★ ${sc} session${sc !== 1 ? 's' : ''} starred` : 'No sessions starred yet — tap ☆ in the Rundown.'}</div>`;
+    if (el('dash-schedule')) el('dash-schedule').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.award,13)}My programme</span><span class="link">View →</span></div><div class="next-venue">${sc > 0 ? `★ ${sc} session${sc !== 1 ? 's' : ''} starred` : 'No sessions starred yet — tap ☆ in the Rundown.'}</div>`;
     // latest announcement
     el('dash-update').innerHTML = `<div class="ann-title">Latest update</div><div class="ann-body" id="dash-ann">—</div>`;
     api('/announcements').then(({ announcements }) => {
@@ -249,13 +273,13 @@
         <div class="t-time">${esc(s.hm)}<small>${esc(s.ap)}</small></div>
         <div class="t-dot"></div>
         <div class="t-content">
-          <span class="${typeCls}">${esc(it.type || 'item')}</span>${i === nowIdx ? '<span class="live-pill"><span class="dot"></span>Live</span>' : ''}
+          <span class="${typeCls}">${typeIcon(it.type)}${esc(it.type || 'item')}</span>${i === nowIdx ? '<span class="live-pill"><span class="dot"></span>Live</span>' : ''}
           <div style="display:flex;align-items:flex-start;gap:8px"><div class="t-title">${esc(it.title)}</div><button class="star-btn" data-fav="${esc(id)}">${starred ? '★' : '☆'}</button></div>
           <div class="t-venue">${esc(it.venue || '')}</div>
           ${it.gather_time ? `<div class="t-gather">Gather ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
-            ${map ? `<a class="chip" href="${map}" target="_blank" rel="noopener">Open in Maps</a>` : ''}
-            <a class="chip" href="${icsHref(day, it)}" download="${esc(it.title)}.ics">Add to calendar</a>
+            ${map ? `<a class="chip" href="${map}" target="_blank" rel="noopener">${ic(P.mapPin,12)}Open in Maps</a>` : ''}
+            <a class="chip" href="${icsHref(day, it)}" download="${esc(it.title)}.ics">${ic(P.calendar,12)}Add to calendar</a>
           </div>
         </div>
       </div>`;
@@ -287,7 +311,7 @@
       root.innerHTML = visits.map((v) => { const map = mapsLink(v.map || v.address); return `<div class="tile">
         <div class="tile-title">${esc(v.place)}</div><div class="tile-meta">${esc(v.time || '')}</div>
         <div class="tile-body">${esc(v.address || '')}<br><br>${esc(v.description || '')}</div>
-        ${map ? `<div class="t-actions" style="margin-top:12px"><a class="chip primary" href="${map}" target="_blank" rel="noopener">Open in Maps</a></div>` : ''}</div>`; }).join('');
+        ${map ? `<div class="t-actions" style="margin-top:12px"><a class="chip primary" href="${map}" target="_blank" rel="noopener">${ic(P.mapPin,12)}Open in Maps</a></div>` : ''}</div>`; }).join('');
     } catch (e) { root.innerHTML = '<div class="empty">Could not load visits.</div>'; }
   }
   function phVisits() { return `<div class="placeholder"><div class="ph-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><p>Visit cards appear here once <b>visits.json</b> is final.</p></div>`; }
@@ -326,9 +350,9 @@
       const h = hotelData.hotel, d = hotelData.delegate; const map = mapsLink(h.map || h.address);
       const tel = (h.contacts || []).find((c) => c.type === 'phone');
       html += `<div class="section-label">Your room</div><div class="hk-grid">
-        ${field('Hotel', h.name)}${field('Room', d.room)}${field('Check-in', d.check_in)}${field('Check-out', d.check_out)}${field('Booking ref', d.booking_ref)}${field('Meals', d.meals)}</div>
-        <div class="hk-actions">${map ? `<a class="hk-action primary" href="${map}" target="_blank" rel="noopener">Open in Maps</a>` : ''}${tel ? `<a class="hk-action" href="tel:${esc(tel.value)}">Call hotel</a>` : ''}</div>`;
-      if (h.wifi) html += `<div class="section-label">WiFi</div><div class="card"><div class="meal-row"><span>Network</span><span>${esc(h.wifi)}</span></div></div>`;
+        ${field('Hotel', h.name, P.building)}${field('Room', d.room, P.door)}${field('Check-in', d.check_in, P.logIn)}${field('Check-out', d.check_out, P.logOut)}${field('Booking ref', d.booking_ref, P.hash)}${field('Meals', d.meals, P.coffee)}</div>
+        <div class="hk-actions">${map ? `<a class="hk-action primary" href="${map}" target="_blank" rel="noopener">${ic(P.mapPin,15)}Open in Maps</a>` : ''}${tel ? `<a class="hk-action" href="tel:${esc(tel.value)}">${ic(P.phone,15)}Call hotel</a>` : ''}</div>`;
+      if (h.wifi) html += `<div class="section-label">WiFi</div><div class="card"><div class="meal-row"><span style="display:flex;align-items:center;gap:7px">${ic(P.wifi,15)}Network</span><span>${esc(h.wifi)}</span></div></div>`;
     } else {
       html += `<div class="card"><div class="next-venue">Your hotel details will appear here once assigned.</div></div>`;
     }
@@ -337,7 +361,7 @@
       ${checkin.bring && checkin.bring.length ? `<div class="card"><div class="card-eyebrow">Bring with you</div>${checkin.bring.map((b) => `<div class="meal-row"><span>${esc(b)}</span><span>✓</span></div>`).join('')}</div>` : ''}`;
     root.innerHTML = html;
   }
-  function field(l, v) { return v ? `<div class="hk-field"><div class="hk-field-label">${esc(l)}</div><div class="hk-field-value">${esc(v)}</div></div>` : ''; }
+  function field(l, v, iconPath) { if (!v) return ''; const ico = iconPath ? `<svg class="hk-field-icon" viewBox="0 0 24 24">${iconPath}</svg>` : ''; return `<div class="hk-field">${ico}<div class="hk-field-label">${esc(l)}</div><div class="hk-field-value">${esc(v)}</div></div>`; }
 
   /* ===================== CONTACT ===================== */
   async function renderContact() {
@@ -348,8 +372,9 @@
       let html = `<div class="tile"><div class="tile-title">${esc(c.org || 'CSCD')}</div>`;
       if (c.venue) html += `<div class="tile-body">${esc(c.venue.name || '')}<br>${esc(c.venue.address || '')}</div>${map ? `<div class="t-actions" style="margin-top:12px"><a class="chip primary" href="${map}" target="_blank" rel="noopener">Open in Maps</a></div>` : ''}`;
       html += `</div>`;
-      if (c.contacts && c.contacts.length) html += `<div class="card"><div class="card-eyebrow">Reach us</div>${c.contacts.map((x) => `<div class="info-row"><span class="info-label">${esc(x.label)}</span><a class="info-val" href="${link(x)}">${esc(x.value)}</a></div>`).join('')}</div>`;
-      if (c.socials && c.socials.length) html += `<div class="card"><div class="card-eyebrow">Online</div>${c.socials.map((x) => `<div class="info-row"><span class="info-label">${esc(x.label)}</span><a class="info-val" href="${esc(x.value)}" target="_blank" rel="noopener">Visit</a></div>`).join('')}</div>`;
+      const cIcons = { email: P.mail, phone: P.phone, whatsapp: P.phone };
+      if (c.contacts && c.contacts.length) html += `<div class="card"><div class="card-eyebrow">Reach us</div>${c.contacts.map((x) => `<div class="info-row"><span class="info-label">${ic(cIcons[(x.type||'').toLowerCase()]||P.globe,15)}${esc(x.label)}</span><a class="info-val" href="${link(x)}">${esc(x.value)}</a></div>`).join('')}</div>`;
+      if (c.socials && c.socials.length) html += `<div class="card"><div class="card-eyebrow">Online</div>${c.socials.map((x) => `<div class="info-row"><span class="info-label">${ic(P.globe,15)}${esc(x.label)}</span><a class="info-val" href="${esc(x.value)}" target="_blank" rel="noopener">Visit</a></div>`).join('')}</div>`;
       root.innerHTML = html;
     } catch (e) { root.innerHTML = '<div class="empty">Could not load contacts.</div>'; }
   }
