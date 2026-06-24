@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>YEF Frankfurt 2026 — Content Brief</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; color: #111; background: #fff; padding: 36px 48px; max-width: 800px; margin: 0 auto; }
+
+  .cover { text-align: center; padding: 48px 0 40px; border-bottom: 2px solid #001224; margin-bottom: 32px; }
+  .cover-tag { font-size: 9pt; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #001224; opacity: 0.55; margin-bottom: 10px; }
+  .cover-title { font-size: 24pt; font-weight: 800; color: #001224; line-height: 1.2; margin-bottom: 8px; }
+  .cover-sub { font-size: 12pt; color: #444; margin-bottom: 20px; }
+  .cover-note { font-size: 9.5pt; color: #666; background: #f5f3ee; border-left: 3px solid #D1C5A9; padding: 10px 14px; text-align: left; display: inline-block; width: 100%; }
+
+  h2 { font-size: 13pt; font-weight: 800; color: #001224; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 1.5px solid #001224; text-transform: uppercase; letter-spacing: 0.06em; }
+  h3 { font-size: 10.5pt; font-weight: 700; color: #001224; margin: 16px 0 6px; }
+
+  .section { margin-bottom: 10px; }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 4px; font-size: 10pt; }
+  th { background: #001224; color: #fff; text-align: left; padding: 7px 10px; font-weight: 700; font-size: 9pt; letter-spacing: 0.04em; }
+  td { padding: 7px 10px; border-bottom: 1px solid #e8e4da; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #faf9f6; }
+  .field { font-weight: 600; color: #001224; white-space: nowrap; width: 38%; }
+  .req { color: #c0392b; font-weight: 700; font-size: 8pt; }
+  .opt { color: #888; font-weight: 700; font-size: 8pt; }
+  .hint { font-size: 9pt; color: #666; margin-top: 3px; }
+
+  .note-box { background: #f5f3ee; border-left: 3px solid #D1C5A9; padding: 9px 13px; margin-bottom: 12px; font-size: 9.5pt; color: #444; }
+  .warn-box { background: #fff8f0; border-left: 3px solid #e67e22; padding: 9px 13px; margin-bottom: 12px; font-size: 9.5pt; color: #555; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px; }
+  .item-block { border: 1px solid #e0dbd0; border-radius: 6px; padding: 12px 14px; }
+  .item-block h3 { margin-top: 0; }
+
+  .repeat-note { font-size: 9pt; color: #888; font-style: italic; margin-bottom: 8px; }
+
+  .footer { margin-top: 40px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 8.5pt; color: #999; text-align: center; }
+
+  @media print {
+    body { padding: 0; }
+    h2 { page-break-before: auto; }
+    .no-break { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-tag">CIPES · Delegate App</div>
+  <div class="cover-title">YEF Frankfurt 2026<br>Content Brief</div>
+  <div class="cover-sub">Information required to finalise the delegate app before the event</div>
+  <div class="cover-note">
+    <strong>How to use this form:</strong> Fill in every field marked <span class="req">REQUIRED</span> before the app can go live.
+    Fields marked <span class="opt">OPTIONAL</span> improve the experience but the app works without them.
+    Return the completed form (or a filled copy) to the app team.
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>1 · Event Basics</h2>
+
+<table>
+  <tr><th class="field">Field</th><th>Your Answer</th></tr>
+  <tr>
+    <td class="field">Official event name <span class="req">REQUIRED</span></td>
+    <td><div class="hint">e.g. "YEF Frankfurt 2026" — shown as the app title and on every screen</div></td>
+  </tr>
+  <tr>
+    <td class="field">Event dates <span class="req">REQUIRED</span></td>
+    <td><div class="hint">Exact start and end dates (DD Month YYYY)</div></td>
+  </tr>
+  <tr>
+    <td class="field">Host city &amp; country <span class="req">REQUIRED</span></td>
+    <td><div class="hint">e.g. Frankfurt, Germany</div></td>
+  </tr>
+  <tr>
+    <td class="field">Event logo / branding <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">PNG with transparent background, min 512×512 px — used as the app icon on home screens</div></td>
+  </tr>
+  <tr>
+    <td class="field">App tagline <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">One short line shown on the login screen, e.g. "Your event, all in one place."</div></td>
+  </tr>
+</table>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>2 · Programme / Rundown</h2>
+
+<div class="note-box">This is the most important section. Every session on every day needs to be listed. The app uses this to power the live "Happening now" strip, the "Up next" cards, and 1-hour-before reminders sent to delegates.</div>
+
+<div class="no-break">
+<h3>For each day, provide:</h3>
+<table>
+  <tr><th class="field">Field</th><th>Details needed</th></tr>
+  <tr>
+    <td class="field">Day label &amp; date <span class="req">REQUIRED</span></td>
+    <td><div class="hint">e.g. "Day 1 — 14 September 2026"</div></td>
+  </tr>
+  <tr>
+    <td class="field">Day theme / title <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">e.g. "Arrival &amp; Opening Ceremony"</div></td>
+  </tr>
+</table>
+</div>
+
+<div class="no-break">
+<h3>For each session / item on that day, provide:</h3>
+<table>
+  <tr><th class="field">Field</th><th>Details needed</th></tr>
+  <tr>
+    <td class="field">Start time <span class="req">REQUIRED</span></td>
+    <td><div class="hint">24-hour format, Frankfurt local time — e.g. 09:00</div></td>
+  </tr>
+  <tr>
+    <td class="field">Session title <span class="req">REQUIRED</span></td>
+    <td><div class="hint">e.g. "Opening Ceremony", "Keynote: The Future of Multilateralism"</div></td>
+  </tr>
+  <tr>
+    <td class="field">Venue / room <span class="req">REQUIRED</span></td>
+    <td><div class="hint">Building name and room, e.g. "Main Hall, Westin Frankfurt"</div></td>
+  </tr>
+  <tr>
+    <td class="field">Session type <span class="req">REQUIRED</span></td>
+    <td><div class="hint">One of: <strong>keynote · panel · workshop · visit · meal · social</strong></div></td>
+  </tr>
+  <tr>
+    <td class="field">Gather / assembly time <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">If delegates must gather before departure — e.g. 08:45 for a 09:00 coach</div></td>
+  </tr>
+  <tr>
+    <td class="field">Send 1-hour reminder? <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">Yes / No — tick Yes for sessions delegates must not miss</div></td>
+  </tr>
+  <tr>
+    <td class="field">Duration (minutes) <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">Used for calendar exports; defaults to 60 min if not given</div></td>
+  </tr>
+</table>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>3 · Institutional Visits &amp; Programs</h2>
+
+<div class="note-box">These appear on the dedicated "Visits" tab with a map link and description for each location.</div>
+
+<h3>For each visit / program, provide:</h3>
+<table>
+  <tr><th class="field">Field</th><th>Details needed</th></tr>
+  <tr>
+    <td class="field">Place / institution name <span class="req">REQUIRED</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Full street address <span class="req">REQUIRED</span></td>
+    <td><div class="hint">Used for the "Open in Google Maps" button</div></td>
+  </tr>
+  <tr>
+    <td class="field">Day &amp; time of visit <span class="req">REQUIRED</span></td>
+    <td><div class="hint">e.g. "Day 2, 14:30"</div></td>
+  </tr>
+  <tr>
+    <td class="field">Description <span class="req">REQUIRED</span></td>
+    <td><div class="hint">2–4 sentences: what delegates will do, dress code, ID requirements, photography rules</div></td>
+  </tr>
+  <tr>
+    <td class="field">Visit image <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">Landscape photo of the institution, min 800px wide (JPG/PNG)</div></td>
+  </tr>
+</table>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>4 · Speakers</h2>
+
+<div class="repeat-note">Complete one set of fields per speaker.</div>
+
+<div class="no-break">
+<table>
+  <tr><th class="field">Field</th><th>Details needed</th></tr>
+  <tr>
+    <td class="field">Full name <span class="req">REQUIRED</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Title / position <span class="req">REQUIRED</span></td>
+    <td><div class="hint">e.g. "Senior Fellow, European Council on Foreign Relations"</div></td>
+  </tr>
+  <tr>
+    <td class="field">Topic / session title <span class="req">REQUIRED</span></td>
+    <td><div class="hint">Short topic label shown on the speaker card</div></td>
+  </tr>
+  <tr>
+    <td class="field">Session day &amp; time <span class="req">REQUIRED</span></td>
+    <td><div class="hint">Must match an item in the rundown — e.g. "Day 1, 10:00"</div></td>
+  </tr>
+  <tr>
+    <td class="field">Short bio <span class="req">REQUIRED</span></td>
+    <td><div class="hint">3–5 sentences shown when a delegate taps the speaker card</div></td>
+  </tr>
+  <tr>
+    <td class="field">Headshot photo <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">Square crop preferred, min 400×400 px (JPG/PNG). If not provided, initials are shown.</div></td>
+  </tr>
+</table>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>5 · Hotel(s)</h2>
+
+<div class="note-box">If delegates are spread across more than one hotel, provide a section for each. Per-delegate room numbers and booking references are loaded separately from the delegate list (Section 7).</div>
+
+<div class="no-break">
+<h3>For each hotel, provide:</h3>
+<table>
+  <tr><th class="field">Field</th><th>Details needed</th></tr>
+  <tr>
+    <td class="field">Hotel name <span class="req">REQUIRED</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Full address <span class="req">REQUIRED</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Google Maps link or coordinates <span class="req">REQUIRED</span></td>
+    <td><div class="hint">Paste a Google Maps share link, or latitude,longitude (e.g. 50.1109,8.6821)</div></td>
+  </tr>
+  <tr>
+    <td class="field">WiFi name &amp; password <span class="req">REQUIRED</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Hotel front-desk phone <span class="req">REQUIRED</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">CIPES on-site coordinator phone <span class="req">REQUIRED</span></td>
+    <td><div class="hint">The number delegates should call if they have a problem at the hotel</div></td>
+  </tr>
+  <tr>
+    <td class="field">Transport tips <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">How to get from the airport / train station; taxi cost estimate; nearest transit stop</div></td>
+  </tr>
+</table>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>6 · Check-in Instructions</h2>
+
+<div class="note-box">A step-by-step guide shown to delegates inside the Hotel tab to help them check in on arrival.</div>
+
+<table>
+  <tr><th class="field">Field</th><th>Details needed</th></tr>
+  <tr>
+    <td class="field">Intro message <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">1–2 sentences shown above the steps, e.g. "Follow these steps when you arrive at your hotel."</div></td>
+  </tr>
+  <tr>
+    <td class="field">Check-in steps <span class="req">REQUIRED</span></td>
+    <td><div class="hint">List each step in order: step title + 1-sentence instruction. Minimum 3 steps.</div></td>
+  </tr>
+  <tr>
+    <td class="field">"What to bring" list <span class="req">REQUIRED</span></td>
+    <td><div class="hint">Documents / items delegates must bring to the front desk (passport, booking ref, etc.)</div></td>
+  </tr>
+  <tr>
+    <td class="field">Check-in opens (time) <span class="opt">OPTIONAL</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Check-out time <span class="opt">OPTIONAL</span></td>
+    <td></td>
+  </tr>
+</table>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>7 · Delegate List</h2>
+
+<div class="warn-box"><strong>This is how login accounts are created.</strong> The app has no public sign-up — accounts are pre-loaded from this list by the admin team. Credentials are then emailed to each delegate.</div>
+
+<h3>Provide a spreadsheet (CSV or Excel) with one row per delegate:</h3>
+<table>
+  <tr><th class="field">Column</th><th>Details needed</th></tr>
+  <tr>
+    <td class="field">Full name <span class="req">REQUIRED</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Email address <span class="req">REQUIRED</span></td>
+    <td><div class="hint">Used as the login username — must be the delegate's real email address</div></td>
+  </tr>
+  <tr>
+    <td class="field">Delegation / country <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">Shown on the delegate's boarding-pass card</div></td>
+  </tr>
+  <tr>
+    <td class="field">Hotel ID <span class="req">REQUIRED</span></td>
+    <td><div class="hint">Which hotel they are staying at (must match one of the hotels in Section 5)</div></td>
+  </tr>
+  <tr>
+    <td class="field">Room number <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">If allocated in advance; can be added later</div></td>
+  </tr>
+  <tr>
+    <td class="field">Booking reference <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">Hotel booking ref shown in the Hotel tab</div></td>
+  </tr>
+  <tr>
+    <td class="field">Check-in date <span class="opt">OPTIONAL</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Check-out date <span class="opt">OPTIONAL</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Meal plan / inclusions <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">e.g. "Breakfast included", "Half-board"</div></td>
+  </tr>
+</table>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>8 · Contact &amp; Support</h2>
+
+<div class="note-box">Shown on the Contact tab. Delegates tap to call, email, or open a link directly from the app.</div>
+
+<table>
+  <tr><th class="field">Field</th><th>Details needed</th></tr>
+  <tr>
+    <td class="field">Main coordination email <span class="req">REQUIRED</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">On-site coordinator name &amp; phone <span class="req">REQUIRED</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Emergency / 24h number <span class="opt">OPTIONAL</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Main venue name &amp; address <span class="req">REQUIRED</span></td>
+    <td><div class="hint">The primary event venue (for the map link on the Contact page)</div></td>
+  </tr>
+  <tr>
+    <td class="field">Instagram handle <span class="opt">OPTIONAL</span></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="field">Any other social / website links <span class="opt">OPTIONAL</span></td>
+    <td></td>
+  </tr>
+</table>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>9 · Notifications &amp; Announcements</h2>
+
+<table>
+  <tr><th class="field">Field</th><th>Details needed</th></tr>
+  <tr>
+    <td class="field">Sender name for emails <span class="req">REQUIRED</span></td>
+    <td><div class="hint">The "From" name delegates see — e.g. "CIPES YEF Frankfurt"</div></td>
+  </tr>
+  <tr>
+    <td class="field">Opening announcement <span class="opt">OPTIONAL</span></td>
+    <td><div class="hint">A welcome message pushed to all delegates when the app goes live (title + 1–2 sentences)</div></td>
+  </tr>
+</table>
+
+<div class="footer">
+  YEF Frankfurt 2026 · CIPES Delegate App · Prepared by the app team · Return completed form to app administrator
+</div>
+
+</body>
+</html>

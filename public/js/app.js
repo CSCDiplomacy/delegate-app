@@ -142,13 +142,25 @@
   /* ===================== NAV + PASS HERO ===================== */
   let current = 'dashboard';
   const rendered = {};
+  const NAV_ORDER = ['dashboard', 'rundown', 'visits', 'speakers', 'schedule', 'hotel', 'contact'];
   function setActiveNav(name) { $$('[data-goto]').forEach((n) => { if (n.classList.contains('nav-link') || n.classList.contains('nav-item')) n.classList.toggle('active', n.dataset.goto === name); }); }
 
   function switchScreen(name) {
+    const fromIdx = NAV_ORDER.indexOf(current);
+    const toIdx   = NAV_ORDER.indexOf(name);
+    const goingLeft = toIdx < fromIdx;
     current = name;
-    $$('.screen').forEach((s) => s.classList.toggle('active', s.dataset.screen === name));
+    $$('.screen').forEach((s) => {
+      const active = s.dataset.screen === name;
+      s.classList.remove('active', 'dir-left');
+      if (active) {
+        s.classList.add('active');
+        if (goingLeft) s.classList.add('dir-left');
+      }
+    });
     setActiveNav(name);
     renderPass(name);
+    el('pass').classList.toggle('pass--compact', name !== 'dashboard');
     if (name === 'dashboard') renderDashboard();
     if (name === 'rundown') renderRundown();
     if (name === 'visits' && !rendered.visits) renderVisits();
@@ -331,9 +343,17 @@
     } catch (e) {}
   }
 
+  /* ===================== SKELETON LOADER ===================== */
+  function skeletonCard(lines) {
+    const lns = (lines || [{ w: 'w70', h: 'h16' }, { w: 'w100', h: 'h12' }, { w: 'w45', h: 'h12' }])
+      .map((l) => `<div class="skel ${l.h} ${l.w}"></div>`).join('');
+    return `<div class="card">${lns}</div>`;
+  }
+
   /* ===================== VISITS ===================== */
   async function renderVisits() {
     rendered.visits = true; const root = el('visits-list');
+    root.innerHTML = skeletonCard() + skeletonCard() + skeletonCard();
     try {
       const { visits } = await getJson('/api/visits');
       if (!visits || !visits.length) { root.innerHTML = phVisits(); return; }
@@ -349,6 +369,7 @@
   async function renderSpeakers() {
     const root = el('speakers-list');
     if (rendered.speakers) { root.innerHTML = listSpeakers(); return; }
+    root.innerHTML = [1,2,3].map(() => skeletonCard([{w:'w70',h:'h16'},{w:'w100',h:'h12'}])).join('');
     try { const d = await getJson('/api/speakers'); speakers = d.speakers || []; rendered.speakers = true;
       root.innerHTML = speakers.length ? listSpeakers() : `<div class="placeholder"><div class="ph-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg></div><p>Speaker bios appear here once the <b>speaker list</b> is shared.</p></div>`;
     } catch (e) { root.innerHTML = '<div class="empty">Could not load speakers.</div>'; }
@@ -371,7 +392,8 @@
 
   /* ===================== HOTEL ===================== */
   async function renderHotel() {
-    const root = el('hotel-content'); root.innerHTML = '<div class="empty">Loading…</div>';
+    const root = el('hotel-content');
+    root.innerHTML = skeletonCard([{w:'w100',h:'h28'},{w:'w70',h:'h12'},{w:'w45',h:'h12'}]) + skeletonCard();
     if (!hotelData) { try { hotelData = await api('/me/hotel'); } catch (e) { hotelData = null; } }
     const checkin = await getJson('/api/checkin').catch(() => null);
     let html = '';
@@ -488,14 +510,19 @@
 
   /* ===================== PWA INSTALL ===================== */
   let _pwaPrompt = null;
-  const PWA_DISMISS_KEY = 'cipes_pwa_dismissed';
+  const PWA_DISMISS_KEY  = 'cipes_pwa_dismissed'; // localStorage — permanent "never show"
+  const PWA_SNOOZE_KEY   = 'cipes_pwa_snooze';    // sessionStorage — "later" (this session only)
 
   function showInstallUI() {
     if (localStorage.getItem(PWA_DISMISS_KEY)) return;
+    if (sessionStorage.getItem(PWA_SNOOZE_KEY)) return;
     const banner = el('pwa-install-banner');
-    const loginBtn = el('btn-pwa-install-login');
     if (banner) banner.style.display = 'flex';
-    if (loginBtn) loginBtn.style.display = 'flex';
+  }
+
+  function hideInstallUI() {
+    const banner = el('pwa-install-banner');
+    if (banner) banner.style.display = 'none';
   }
 
   window.addEventListener('beforeinstallprompt', (e) => {
@@ -504,7 +531,7 @@
     showInstallUI();
   });
 
-  // Hide banner if app is already installed (standalone mode)
+  // If already running as installed PWA, permanently suppress the banner
   if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
     localStorage.setItem(PWA_DISMISS_KEY, '1');
   }
@@ -520,6 +547,21 @@
     el('btn-feedback').onclick = sendFeedback;
     el('modal-ok').onclick = closeModal;
 
+    // password visibility toggles
+    function makeEyeToggle(btnId, inputId) {
+      const btn = el(btnId); if (!btn) return;
+      btn.onclick = () => {
+        const inp = el(inputId);
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+        btn.setAttribute('aria-label', inp.type === 'password' ? 'Show password' : 'Hide password');
+        btn.querySelector('svg').innerHTML = inp.type === 'password'
+          ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+          : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+      };
+    }
+    makeEyeToggle('btn-pw-eye', 'password');
+    makeEyeToggle('btn-new-pw-eye', 'new-password');
+
     $$('.js-theme').forEach((b) => b.onclick = toggleTheme);
     $$('.js-logout').forEach((b) => b.onclick = doLogout);
     $$('.js-bell').forEach((b) => b.onclick = () => { openDrawer(el('rail')); markAllRead(); });
@@ -528,29 +570,46 @@
     $$('.js-menu-close').forEach((b) => b.onclick = closeDrawers);
     el('backdrop').onclick = closeDrawers;
 
+    // swipe to close drawers (right-side rail: swipe right; left-side menu: swipe left)
+    function addSwipeClose(elm, closeDir) {
+      let sx = null;
+      elm.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });
+      elm.addEventListener('touchend', (e) => {
+        if (sx === null) return;
+        const dx = e.changedTouches[0].clientX - sx;
+        if (closeDir === 'right' && dx > 60) closeDrawers();
+        if (closeDir === 'left'  && dx < -60) closeDrawers();
+        sx = null;
+      }, { passive: true });
+    }
+    addSwipeClose(el('rail'),        'right'); // updates rail: swipe right to close
+    addSwipeClose(el('menu-drawer'), 'left');  // menu drawer: swipe left to close
+
     async function triggerPwaInstall() {
       if (!_pwaPrompt) return;
       _pwaPrompt.prompt();
       const { outcome } = await _pwaPrompt.userChoice;
       _pwaPrompt = null;
       if (outcome === 'accepted') localStorage.setItem(PWA_DISMISS_KEY, '1');
-      const banner = el('pwa-install-banner');
-      const loginBtn = el('btn-pwa-install-login');
-      if (banner) banner.style.display = 'none';
-      if (loginBtn) loginBtn.style.display = 'none';
+      hideInstallUI();
     }
 
     const btnInstall = el('btn-pwa-install');
-    const btnInstallLogin = el('btn-pwa-install-login');
-    const btnDismiss = el('btn-pwa-dismiss');
+    const btnLater   = el('btn-pwa-later');
+    const btnNever   = el('btn-pwa-never');
+
     if (btnInstall) btnInstall.onclick = triggerPwaInstall;
-    if (btnInstallLogin) btnInstallLogin.onclick = triggerPwaInstall;
-    if (btnDismiss) btnDismiss.onclick = () => {
+
+    if (btnLater) btnLater.onclick = () => {
+      // Snooze for this session only — banner returns next time they open the app
+      sessionStorage.setItem(PWA_SNOOZE_KEY, '1');
+      hideInstallUI();
+    };
+
+    if (btnNever) btnNever.onclick = () => {
+      // Permanent dismissal — never show on this device again
       localStorage.setItem(PWA_DISMISS_KEY, '1');
-      const banner = el('pwa-install-banner');
-      const loginBtn = el('btn-pwa-install-login');
-      if (banner) banner.style.display = 'none';
-      if (loginBtn) loginBtn.style.display = 'none';
+      hideInstallUI();
     };
 
     document.addEventListener('click', (e) => {

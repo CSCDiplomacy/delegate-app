@@ -23,16 +23,20 @@
         <span class="brand-sub" id="login-event">YEF Frankfurt 2026</span>
       </div>
       <div class="login-perf"></div>
-      <button class="btn-install-login" id="btn-pwa-install-login" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 2v13M8 11l4 4 4-4"/><path d="M4 17v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1"/></svg>
-        Install Application
-      </button>
       <div class="login-body">
         <div id="login-form">
           <h1>Delegate sign in</h1>
           <p class="tag">Your event, all in one place.</p>
           <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" inputmode="email" /></div>
-          <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" /></div>
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="pw-wrap">
+              <input id="password" type="password" autocomplete="current-password" />
+              <button type="button" class="pw-eye" id="btn-pw-eye" aria-label="Show password">
+                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
           <div id="login-msg" class="form-msg"></div>
           <button class="btn" id="btn-login">Sign in</button>
           <button class="link-btn" id="btn-forgot">Forgot password?</button>
@@ -48,7 +52,15 @@
         <div id="newpw-form" class="hidden">
           <h1>New password</h1>
           <p class="tag">Choose a new password.</p>
-          <div class="field"><label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" /></div>
+          <div class="field">
+            <label for="new-password">New password</label>
+            <div class="pw-wrap">
+              <input id="new-password" type="password" autocomplete="new-password" />
+              <button type="button" class="pw-eye" id="btn-new-pw-eye" aria-label="Show password">
+                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
           <div id="newpw-msg" class="form-msg"></div>
           <button class="btn" id="btn-set-pw">Update password</button>
         </div>
@@ -125,6 +137,23 @@
           <!-- DASHBOARD -->
           <section class="screen active" data-screen="dashboard">
             <div id="dash-clock" class="dash-clock"></div>
+            <!-- PWA install prompt — shown below the clock, only when browser supports it -->
+            <div id="pwa-install-banner" class="pwa-install-banner" style="display:none">
+              <div class="pwa-install-top">
+                <div class="pwa-install-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13M8 11l4 4 4-4"/><path d="M4 17v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1"/></svg>
+                </div>
+                <div class="pwa-install-text">
+                  <strong>Add to Home Screen</strong>
+                  <span>Get instant access — no browser needed</span>
+                </div>
+              </div>
+              <div class="pwa-install-actions">
+                <button class="btn brass small" id="btn-pwa-install">Install</button>
+                <button class="btn ghost small" id="btn-pwa-later">Later</button>
+                <button class="pwa-never-btn" id="btn-pwa-never">Don't show again</button>
+              </div>
+            </div>
             <div id="dash-live"></div>
             <div class="dash-grid">
               <div>
@@ -142,20 +171,6 @@
             </div>
             <div class="section-label">Latest update</div>
             <div id="dash-update" class="card"></div>
-            <!-- PWA install prompt — shown only when browser supports it and user hasn't dismissed -->
-            <div id="pwa-install-banner" class="pwa-install-banner" style="display:none">
-              <div class="pwa-install-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13M8 11l4 4 4-4"/><path d="M4 17v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1"/></svg>
-              </div>
-              <div class="pwa-install-text">
-                <strong>Add to Home Screen</strong>
-                <span>Access the app instantly without opening a browser</span>
-              </div>
-              <div class="pwa-install-actions">
-                <button class="btn brass small" id="btn-pwa-install">Install</button>
-                <button class="btn ghost small" id="btn-pwa-dismiss">Later</button>
-              </div>
-            </div>
           </section>
 
           <!-- RUNDOWN -->
@@ -216,8 +231,8 @@
       </div>
       <div class="menu-body">
         <div class="menu-user" id="menu-user"></div>
+        <button class="menu-link" data-goto="hotel"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7"/></svg>Hotel &amp; Check-in</button>
         <button class="menu-link" data-goto="contact"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>Contact us</button>
-        <button class="menu-link" data-goto="schedule"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>My Schedule</button>
         <a class="menu-link" href="https://thecipes.org" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>CIPES website</a>
         <button class="btn ghost js-logout">Sign out</button>
       </div>
@@ -229,9 +244,9 @@
     <nav class="bottom-nav">
       <button class="nav-item active" data-goto="dashboard"><span class="nav-indicator"></span><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></button>
       <button class="nav-item" data-goto="rundown"><span class="nav-indicator"></span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Rundown</span></button>
-      <button class="nav-item" data-goto="visits"><span class="nav-indicator"></span><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Visits</span></button>
+      <button class="nav-item" data-goto="visits"><span class="nav-indicator"></span><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Programs</span></button>
       <button class="nav-item" data-goto="speakers"><span class="nav-indicator"></span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg><span>Speakers</span></button>
-      <button class="nav-item" data-goto="hotel"><span class="nav-indicator"></span><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7"/></svg><span>Hotel</span></button>
+      <button class="nav-item" data-goto="schedule"><span class="nav-indicator"></span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Schedule</span></button>
     </nav>
   </div>
 
