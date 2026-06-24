@@ -1,0 +1,25 @@
+{
+  "name": "cscd-delegate-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CSCD Delegate App — mobile-first PWA for a CSCD diplomacy event",
+  "main": "app.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js",
+    "seed": "node scripts/seed-delegates.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "compression": "^1.7.4",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.1.0",
+    "node-cron": "^3.0.3",
+    "resend": "^4.0.0"
+  }
+}

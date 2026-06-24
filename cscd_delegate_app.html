@@ -1,0 +1,416 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.app{font-family:var(--font-sans);max-width:420px;margin:0 auto;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);overflow:hidden;}
+.app-header{background:#0F6E56;padding:14px 16px 12px;color:#fff;display:flex;align-items:center;justify-content:space-between;}
+.app-header .logo{font-size:13px;font-weight:500;letter-spacing:0.04em;}
+.app-header .event-tag{font-size:11px;background:rgba(255,255,255,0.18);padding:3px 8px;border-radius:4px;}
+.screen{display:none;padding:14px 14px 0;}
+.screen.active{display:block;}
+.nav{display:grid;grid-template-columns:repeat(5,1fr);border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);}
+.nav-btn{padding:10px 4px 8px;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--color-text-secondary);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.nav-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.5;}
+.nav-btn.active{color:#0F6E56;}
+
+/* Agenda */
+.day-tabs{display:flex;gap:6px;margin-bottom:12px;}
+.day-tab{font-size:12px;padding:5px 12px;border-radius:4px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);}
+.day-tab.active{background:#0F6E56;color:#fff;border-color:#0F6E56;}
+.session{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
+.session:last-child{border-bottom:none;}
+.sess-time{font-size:11px;color:var(--color-text-secondary);min-width:52px;padding-top:2px;}
+.sess-body{}
+.sess-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px;}
+.sess-sub{font-size:11px;color:var(--color-text-secondary);}
+.sess-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:3px;margin-top:4px;}
+.badge-keynote{background:#E1F5EE;color:#085041;}
+.badge-workshop{background:#EEEDFE;color:#3C3489;}
+.badge-panel{background:#FAEEDA;color:#633806;}
+.badge-social{background:#FAECE7;color:#712B13;}
+
+/* Speakers */
+.spk-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;margin-bottom:10px;display:flex;gap:12px;cursor:pointer;}
+.spk-card:hover{border-color:var(--color-border-secondary);}
+.avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;}
+.av-teal{background:#E1F5EE;color:#085041;}
+.av-blue{background:#E6F1FB;color:#0C447C;}
+.av-purple{background:#EEEDFE;color:#3C3489;}
+.av-amber{background:#FAEEDA;color:#633806;}
+.spk-name{font-size:13px;font-weight:500;color:var(--color-text-primary);}
+.spk-title{font-size:11px;color:var(--color-text-secondary);margin-top:2px;line-height:1.4;}
+.spk-topic{font-size:11px;color:#0F6E56;margin-top:5px;}
+.spk-detail{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;margin-bottom:10px;}
+.back-btn{font-size:12px;color:#0F6E56;background:none;border:none;cursor:pointer;padding:0 0 10px;display:flex;align-items:center;gap:4px;}
+
+/* Calendar */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-title{font-size:14px;font-weight:500;color:var(--color-text-primary);}
+.cal-nav{background:none;border:0.5px solid var(--color-border-secondary);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:12px;color:var(--color-text-secondary);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:12px;}
+.cal-day-label{font-size:10px;color:var(--color-text-secondary);text-align:center;padding:3px 0;}
+.cal-day{font-size:12px;text-align:center;padding:5px 2px;border-radius:4px;cursor:pointer;}
+.cal-day.empty{color:transparent;}
+.cal-day.has-event{background:#E1F5EE;color:#085041;font-weight:500;}
+.cal-day.today{background:#0F6E56;color:#fff;font-weight:500;}
+.cal-day.inactive{color:var(--color-text-secondary);}
+.act-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
+.act-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.act-title{font-size:13px;color:var(--color-text-primary);}
+.act-time{font-size:11px;color:var(--color-text-secondary);}
+
+/* Hotel */
+.hotel-hero{background:#0F6E56;border-radius:var(--border-radius-lg);padding:14px;margin-bottom:12px;color:#fff;}
+.hotel-name{font-size:15px;font-weight:500;margin-bottom:2px;}
+.hotel-addr{font-size:12px;opacity:0.8;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
+.info-row:last-child{border-bottom:none;}
+.info-label{font-size:12px;color:var(--color-text-secondary);}
+.info-val{font-size:13px;font-weight:500;color:var(--color-text-primary);}
+.info-val.green{color:#0F6E56;}
+.map-placeholder{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.map-placeholder span{font-size:12px;color:var(--color-text-secondary);}
+.hotel-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;margin-bottom:10px;}
+
+/* Chat */
+.chat-area{padding-bottom:8px;}
+.bubble{padding:8px 12px;border-radius:12px;font-size:13px;margin-bottom:8px;max-width:88%;line-height:1.5;}
+.bot-bubble{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);}
+.user-bubble{background:#0F6E56;color:#fff;margin-left:auto;}
+.typing{display:flex;gap:4px;padding:10px 12px;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--color-text-secondary);}
+.quick-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.chip{font-size:11px;border:0.5px solid var(--color-border-secondary);border-radius:20px;padding:4px 10px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);}
+.chip:hover{background:var(--color-background-secondary);}
+.chat-input-row{display:flex;gap:8px;padding:10px 14px;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);}
+.chat-input-row input{flex:1;padding:7px 10px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:20px;background:var(--color-background-secondary);color:var(--color-text-primary);}
+.send-btn{width:32px;height:32px;border-radius:50%;background:#0F6E56;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.send-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;}
+
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px;}
+</style>
+
+<h2 class="sr-only">CSCD Delegate App interactive preview with agenda, speakers, calendar, hotel, and AI chat screens</h2>
+
+<div style="background:var(--color-background-secondary);padding:1rem;border-radius:var(--border-radius-lg);">
+<div class="app">
+
+  <div class="app-header">
+    <div class="logo">CSCD Delegate App</div>
+    <div class="event-tag">YCDF Bangkok 2025</div>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="screen active" id="screen-agenda">
+    <div class="section-label">Full agenda</div>
+    <div class="day-tabs">
+      <button class="day-tab active" onclick="switchDay(0,this)">Day 1</button>
+      <button class="day-tab" onclick="switchDay(1,this)">Day 2</button>
+      <button class="day-tab" onclick="switchDay(2,this)">Day 3</button>
+    </div>
+    <div id="day-content"></div>
+    <div style="height:14px;"></div>
+  </div>
+
+  <!-- SPEAKERS -->
+  <div class="screen" id="screen-speakers">
+    <div class="section-label">Speakers</div>
+    <div id="speakers-list"></div>
+    <div style="height:14px;"></div>
+  </div>
+
+  <!-- CALENDAR / ACTIVITIES -->
+  <div class="screen" id="screen-calendar">
+    <div class="section-label">Calendar & activities</div>
+    <div class="cal-header">
+      <div class="cal-title">June 2025</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="section-label">Selected day activities</div>
+    <div id="activities-list"></div>
+    <div style="height:14px;"></div>
+  </div>
+
+  <!-- HOTEL -->
+  <div class="screen" id="screen-hotel">
+    <div class="section-label">Hotel & check-in</div>
+    <div class="hotel-hero">
+      <div class="hotel-name">Centara Grand Bangkok</div>
+      <div class="hotel-addr">99/99 Rama 1 Rd, Pathumwan, Bangkok 10330</div>
+    </div>
+    <div class="hotel-card">
+      <div class="info-row"><span class="info-label">Check-in</span><span class="info-val green">12 Jun 2025, 3:00 PM</span></div>
+      <div class="info-row"><span class="info-label">Check-out</span><span class="info-val">14 Jun 2025, 12:00 PM</span></div>
+      <div class="info-row"><span class="info-label">Room type</span><span class="info-val">Delegate standard (twin)</span></div>
+      <div class="info-row"><span class="info-label">Booking ref</span><span class="info-val">CSCD-BKK-2841</span></div>
+      <div class="info-row"><span class="info-label">Meals included</span><span class="info-val">Breakfast + conference lunch</span></div>
+      <div class="info-row"><span class="info-label">WiFi password</span><span class="info-val">CSCD@BKK25</span></div>
+    </div>
+    <div class="hotel-card">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;">Transport from airport</div>
+      <div class="info-row"><span class="info-label">Shuttle bus</span><span class="info-val">Gate 4, every 45 min</span></div>
+      <div class="info-row"><span class="info-label">BTS Skytrain</span><span class="info-val">Siam Station (10 min walk)</span></div>
+      <div class="info-row"><span class="info-label">Taxi estimate</span><span class="info-val">~350 THB (25 min)</span></div>
+    </div>
+    <div class="hotel-card">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px;">Emergency contacts</div>
+      <div class="info-row"><span class="info-label">CSCD coordinator</span><span class="info-val" style="color:#0F6E56;">+66 81 234 5678</span></div>
+      <div class="info-row"><span class="info-label">Hotel front desk</span><span class="info-val" style="color:#0F6E56;">+66 2 100 6255</span></div>
+    </div>
+    <div style="height:14px;"></div>
+  </div>
+
+  <!-- AI CHAT -->
+  <div class="screen" id="screen-chat">
+    <div class="chat-area" id="chat-area">
+      <div class="bubble bot-bubble">Hi! I'm your CSCD assistant. Ask me anything about the forum — agenda, speakers, hotel, visa info, or activities.</div>
+      <div class="section-label" style="margin-top:8px;">Quick questions</div>
+      <div class="quick-chips">
+        <div class="chip" onclick="quickAsk('What time does Day 1 start?')">Day 1 start time?</div>
+        <div class="chip" onclick="quickAsk('Where is the hotel?')">Hotel location</div>
+        <div class="chip" onclick="quickAsk('Who are the keynote speakers?')">Keynote speakers</div>
+        <div class="chip" onclick="quickAsk('What should I pack?')">What to pack</div>
+        <div class="chip" onclick="quickAsk('Is there a dress code?')">Dress code</div>
+        <div class="chip" onclick="quickAsk('How do I get from the airport to the hotel?')">Airport transfer</div>
+      </div>
+    </div>
+    <div style="height:8px;"></div>
+  </div>
+
+  <div class="nav" id="bottom-nav">
+    <button class="nav-btn active" onclick="switchScreen('agenda',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Agenda
+    </button>
+    <button class="nav-btn" onclick="switchScreen('speakers',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Speakers
+    </button>
+    <button class="nav-btn" onclick="switchScreen('calendar',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="15" r="1" fill="currentColor"/><circle cx="12" cy="15" r="1" fill="currentColor"/></svg>
+      Calendar
+    </button>
+    <button class="nav-btn" onclick="switchScreen('hotel',this)">
+      <svg viewBox="0 0 24 24"><path d="M3 22V8l9-5 9 5v14"/><rect x="9" y="14" width="6" height="8"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+      Hotel
+    </button>
+    <button class="nav-btn" onclick="switchScreen('chat',this)">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      AI Chat
+    </button>
+  </div>
+
+  <div id="chat-input-bar" style="display:none;">
+    <div class="chat-input-row">
+      <input type="text" id="chat-input" placeholder="Ask anything about the forum..." onkeydown="if(event.key==='Enter')sendChat()" />
+      <button class="send-btn" onclick="sendChat()">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+const agenda = [
+  [
+    {time:'08:30',title:'Registration & welcome coffee',sub:'Main foyer, Centara Grand',badge:'social',label:'Social'},
+    {time:'09:30',title:'Opening ceremony',sub:'H.E. Ambassador & CSCD Director',badge:'keynote',label:'Keynote'},
+    {time:'10:30',title:'Keynote: Soft power in the digital age',sub:'Dr Priya Menon, UN-University for Peace',badge:'keynote',label:'Keynote'},
+    {time:'12:00',title:'Networking lunch',sub:'Rooftop terrace',badge:'social',label:'Social'},
+    {time:'14:00',title:'Workshop: Intercultural communication',sub:'Track A & B split sessions',badge:'workshop',label:'Workshop'},
+    {time:'16:00',title:'Panel: Youth diplomacy — real change?',sub:'5 speakers, moderated debate',badge:'panel',label:'Panel'},
+    {time:'18:30',title:'Welcome gala dinner',sub:'Grand ballroom, formal attire',badge:'social',label:'Social'},
+  ],
+  [
+    {time:'09:00',title:'Keynote: Cultural diplomacy & AI',sub:'Bhavna Dahiya, St. Stephen\'s College',badge:'keynote',label:'Keynote'},
+    {time:'10:30',title:'Workshop: Negotiation & conflict resolution',sub:'Interactive simulation exercise',badge:'workshop',label:'Workshop'},
+    {time:'12:30',title:'Lunch & country showcase',sub:'Delegates share cultural moments',badge:'social',label:'Social'},
+    {time:'14:00',title:'Breakout: Research presentations',sub:'Delegates present their papers',badge:'panel',label:'Panel'},
+    {time:'16:00',title:'City cultural tour',sub:'Optional — Wat Pho & Grand Palace',badge:'social',label:'Social'},
+    {time:'19:00',title:'Dinner on own / group outings',sub:'Restaurant list provided',badge:'social',label:'Social'},
+  ],
+  [
+    {time:'09:00',title:'Panel: Peacekeeping & global governance',sub:'Irfan Pullani & guests',badge:'panel',label:'Panel'},
+    {time:'10:30',title:'Workshop: Advocacy & public speaking',sub:'Androvish G. Berrian',badge:'workshop',label:'Workshop'},
+    {time:'12:00',title:'Closing lunch',sub:'All delegates & faculty',badge:'social',label:'Social'},
+    {time:'14:00',title:'Delegate resolutions & declarations',sub:'Joint session — all tracks',badge:'keynote',label:'Keynote'},
+    {time:'15:30',title:'Certificate ceremony & closing',sub:'Certificates presented by CSCD Director',badge:'keynote',label:'Keynote'},
+    {time:'17:00',title:'Farewell reception',sub:'Garden terrace',badge:'social',label:'Social'},
+  ]
+];
+
+const speakers = [
+  {init:'BD',av:'av-blue',name:'Bhavna Dahiya',title:'Scholar, St. Stephen\'s College India',topic:'Cultural diplomacy & AI in the modern era',bio:'A top graduate of St. Stephen\'s College, India. Acclaimed author and researcher with over 19 international publications. Has represented India at global forums on international relations and climate diplomacy.'},
+  {init:'IP',av:'av-teal',name:'Irfan Pullani',title:'Scholar, UN-University for Peace',topic:'Peacekeeping & global governance',bio:'A renowned young scholar from India. Received scholarly education from the UN-University for Peace and underwent training at the United Nations Office in Geneva.'},
+  {init:'AB',av:'av-purple',name:'Androvish G. Berrian',title:'LLM, MA, PhD in Philosophy',topic:'Advocacy, arts & public speaking',bio:'Distinguished scholar in art media. Advanced degrees in law and arts. Research spans philosophy, media studies, and the intersection of culture and international discourse.'},
+  {init:'WH',av:'av-amber',name:'Abdul Waris Hameed',title:'Security & Strategic Studies, Pakistan',topic:'Soft power through photography & arts',bio:'Scholar of Security & Strategic Studies and Artist from Pakistan. Leads Nashist, a photography-talk forum blending arts and strategy with soft power context.'},
+];
+
+const activities = {
+  12:[
+    {color:'#1D9E75',title:'Opening ceremony',time:'09:30 — Main hall'},
+    {color:'#534AB7',title:'Intercultural workshop',time:'14:00 — Track A & B'},
+    {color:'#993C1D',title:'Welcome gala dinner',time:'18:30 — Grand ballroom'},
+  ],
+  13:[
+    {color:'#1D9E75',title:'Keynote: Cultural diplomacy & AI',time:'09:00 — Main hall'},
+    {color:'#534AB7',title:'Negotiation workshop',time:'10:30 — Workshop room'},
+    {color:'#BA7517',title:'Cultural tour — Wat Pho',time:'16:00 — Optional excursion'},
+  ],
+  14:[
+    {color:'#1D9E75',title:'Resolutions & declarations',time:'14:00 — All tracks'},
+    {color:'#993C1D',title:'Certificate ceremony',time:'15:30 — Main hall'},
+    {color:'#BA7517',title:'Farewell reception',time:'17:00 — Garden terrace'},
+  ]
+};
+
+let currentDay = 0;
+let selectedSpk = null;
+
+function switchDay(d, btn) {
+  currentDay = d;
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderAgenda();
+}
+
+function renderAgenda() {
+  const c = document.getElementById('day-content');
+  c.innerHTML = agenda[currentDay].map(s => `
+    <div class="session">
+      <div class="sess-time">${s.time}</div>
+      <div class="sess-body">
+        <div class="sess-title">${s.title}</div>
+        <div class="sess-sub">${s.sub}</div>
+        <span class="sess-badge badge-${s.badge}">${s.label}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSpeakers() {
+  const c = document.getElementById('speakers-list');
+  if (selectedSpk !== null) {
+    const s = speakers[selectedSpk];
+    c.innerHTML = `
+      <button class="back-btn" onclick="selectedSpk=null;renderSpeakers()">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#0F6E56" fill="none" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        All speakers
+      </button>
+      <div class="spk-detail">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+          <div class="avatar ${s.av}" style="width:56px;height:56px;font-size:16px;">${s.init}</div>
+          <div>
+            <div style="font-size:15px;font-weight:500;color:var(--color-text-primary);">${s.name}</div>
+            <div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px;">${s.title}</div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:500;color:#0F6E56;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">Speaking on</div>
+        <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px;">${s.topic}</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);line-height:1.6;">${s.bio}</div>
+      </div>
+    `;
+  } else {
+    c.innerHTML = speakers.map((s,i) => `
+      <div class="spk-card" onclick="selectedSpk=${i};renderSpeakers()">
+        <div class="avatar ${s.av}">${s.init}</div>
+        <div>
+          <div class="spk-name">${s.name}</div>
+          <div class="spk-title">${s.title}</div>
+          <div class="spk-topic">${s.topic}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderCalendar() {
+  const grid = document.getElementById('cal-grid');
+  const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  let html = days.map(d => `<div class="cal-day-label">${d}</div>`).join('');
+  const start = 0;
+  for (let i=0;i<start;i++) html += `<div class="cal-day empty">-</div>`;
+  for (let d=1;d<=30;d++) {
+    let cls = 'cal-day';
+    if (d===12||d===13||d===14) cls += ' has-event';
+    if (d===12) cls += ' today';
+    html += `<div class="${cls}" onclick="selectDay(${d})">${d}</div>`;
+  }
+  grid.innerHTML = html;
+  selectDay(12);
+}
+
+function selectDay(d) {
+  const list = document.getElementById('activities-list');
+  const acts = activities[d];
+  if (!acts) { list.innerHTML = `<div style="font-size:13px;color:var(--color-text-secondary);padding:8px 0;">No scheduled activities</div>`; return; }
+  list.innerHTML = acts.map(a => `
+    <div class="act-item">
+      <div class="act-dot" style="background:${a.color};"></div>
+      <div><div class="act-title">${a.title}</div><div class="act-time">${a.time}</div></div>
+    </div>
+  `).join('');
+}
+
+function switchScreen(name, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const bar = document.getElementById('chat-input-bar');
+  bar.style.display = name==='chat' ? 'block' : 'none';
+  if (name==='speakers') renderSpeakers();
+}
+
+const botReplies = {
+  'what time does day 1 start': 'Day 1 kicks off at 08:30 with registration and welcome coffee in the main foyer. The opening ceremony begins at 09:30.',
+  'where is the hotel': 'You\'re staying at the Centara Grand Bangkok, located at 99/99 Rama 1 Rd, Pathumwan. It\'s a 10-minute walk from Siam BTS Skytrain station.',
+  'who are the keynote speakers': 'The keynote speakers are Bhavna Dahiya (Cultural Diplomacy & AI), Irfan Pullani (Peacekeeping & Governance), Androvish G. Berrian (Advocacy & Arts), and Abdul Waris Hameed (Soft Power through Arts).',
+  'what should i pack': 'Bring smart-casual clothes for daytime sessions, formal attire for the gala dinner on Day 1, and comfortable shoes for the optional cultural tour. Don\'t forget your delegate badge and ID.',
+  'is there a dress code': 'Smart-casual for all daytime sessions and workshops. Formal/semi-formal for the welcome gala dinner on Day 1 evening.',
+  'how do i get from the airport to the hotel': 'Three options: (1) Shuttle bus from Gate 4, every 45 minutes. (2) BTS Skytrain to Siam Station, then a 10-minute walk. (3) Taxi — approximately 350 THB, takes about 25 minutes.',
+};
+
+function quickAsk(q) {
+  addUserBubble(q);
+  setTimeout(() => {
+    const key = q.toLowerCase();
+    const reply = botReplies[key] || 'Great question! For detailed information on that, please check with the CSCD coordination team at contact@thecscd.org or ask at the hotel info desk on arrival.';
+    addBotBubble(reply);
+  }, 600);
+}
+
+function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = '';
+  addUserBubble(txt);
+  setTimeout(() => {
+    const key = txt.toLowerCase();
+    let reply = 'I\'ll check that for you! For the most accurate answer, please contact the CSCD team at contact@thecscd.org. Is there anything else I can help with?';
+    for (const k in botReplies) { if (key.includes(k.split(' ')[0]) && key.includes(k.split(' ')[1]||'')) { reply = botReplies[k]; break; } }
+    addBotBubble(reply);
+  }, 700);
+}
+
+function addUserBubble(text) {
+  const area = document.getElementById('chat-area');
+  const b = document.createElement('div');
+  b.className = 'bubble user-bubble';
+  b.textContent = text;
+  area.appendChild(b);
+}
+
+function addBotBubble(text) {
+  const area = document.getElementById('chat-area');
+  const b = document.createElement('div');
+  b.className = 'bubble bot-bubble';
+  b.textContent = text;
+  area.appendChild(b);
+}
+
+renderAgenda();
+renderCalendar();
+</script>

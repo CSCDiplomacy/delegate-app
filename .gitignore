@@ -1,0 +1,15 @@
+# Secrets & environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Logs & OS
+*.log
+npm-debug.log*
+.DS_Store
+
+# Credential output from seed-delegates.js (delegate passwords)
+*credentials*.csv

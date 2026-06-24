@@ -1,0 +1,17 @@
+{
+  "_note": "PLACEHOLDER guided check-in template (shared by all delegates). Replace wording with the client's real reception/passport/program-name steps when provided.",
+  "title": "Guided check-in",
+  "intro": "Follow these steps when you arrive at the hotel. This is placeholder wording and will be finalised before the event.",
+  "steps": [
+    { "step": 1, "title": "Go to reception", "detail": "Head to the hotel reception/front desk on arrival." },
+    { "step": 2, "title": "Present your passport / ID", "detail": "Have your passport or a government-issued photo ID ready." },
+    { "step": 3, "title": "Staff find you on the list", "detail": "The desk has the delegate rooming list; they will locate your booking." },
+    { "step": 4, "title": "State your program name", "detail": "Mention you are attending the CSCD program so staff apply the correct rate and inclusions." },
+    { "step": 5, "title": "Receive your room allocation", "detail": "Collect your key card and note your room number, breakfast times, and WiFi." }
+  ],
+  "bring": [
+    "Passport / government-issued ID",
+    "Your delegate / Frankfurt ID",
+    "Booking reference (shown on your Hotel tab)"
+  ]
+}

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSCD Delegate App — Credential Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,500&family=Lato:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF7EF;
+    --paper-soft:#F2ECDD;
+    --ink:#1B1812;
+    --ink-soft:#4A4438;
+    --muted: rgba(27,24,18,0.56);
+    --muted-strong: rgba(27,24,18,0.74);
+    --brass:#C9A227;
+    --brass-deep:#9C7B17;
+    --signal:#FF2D6B;
+    --signal-deep:#C7124C;
+    --signal-soft: rgba(255,45,107,0.14);
+    --surface:#FFFFFF;
+    --surface-2:#161310;
+    --on-surface-2:#FBF7EF;
+    --hairline: rgba(27,24,18,0.14);
+    --hairline-strong: rgba(27,24,18,0.24);
+    --shadow: 0 10px 30px rgba(27,24,18,0.10);
+    --shadow-strong: 0 26px 60px rgba(27,24,18,0.22);
+    --radius-lg: 22px;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  [data-theme="dark"]{
+    --paper:#15120E;
+    --paper-soft:#1E1A14;
+    --ink:#F7F1E4;
+    --ink-soft:#D9D0BC;
+    --muted: rgba(247,241,228,0.56);
+    --muted-strong: rgba(247,241,228,0.78);
+    --brass:#E8C158;
+    --brass-deep:#C9A227;
+    --signal:#FF4F84;
+    --signal-deep:#FF2D6B;
+    --signal-soft: rgba(255,79,132,0.18);
+    --surface:#221E17;
+    --surface-2:#0B0A07;
+    --on-surface-2:#F7F1E4;
+    --hairline: rgba(247,241,228,0.12);
+    --hairline-strong: rgba(247,241,228,0.22);
+    --shadow: 0 10px 30px rgba(0,0,0,0.4);
+    --shadow-strong: 0 30px 70px rgba(0,0,0,0.6);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:#d8d2c1;
+    font-family:'Lato',sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:36px 18px 60px;
+  }
+  [data-theme="dark"] body{background:#070605;}
+
+  .app-frame{
+    width:390px;
+    height:830px;
+    background:var(--paper);
+    border-radius:36px;
+    border:1px solid var(--hairline);
+    box-shadow:var(--shadow-strong);
+    overflow:hidden;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    transition:background .3s ease;
+  }
+
+  /* ============ TOP BAR ============ */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 18px 0;flex-shrink:0;position:relative;z-index:30;
+  }
+  .brand{display:flex;align-items:center;gap:9px;}
+  .brand-seal{
+    width:30px;height:30px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--brass) 0%, var(--brass-deep) 70%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 8px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.4);
+    flex-shrink:0;
+  }
+  .brand-seal svg{width:15px;height:15px;stroke:#1B1812;fill:none;stroke-width:1.6;}
+  .brand-text{line-height:1.1;}
+  .brand-mark{font-family:'Cinzel',serif;font-weight:600;font-size:15px;letter-spacing:0.05em;display:block;}
+  .brand-sub{font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+
+  .topbar-actions{display:flex;align-items:center;gap:9px;}
+  .theme-toggle{
+    width:54px;height:30px;border-radius:16px;
+    background:var(--paper-soft);border:1px solid var(--hairline-strong);
+    position:relative;cursor:pointer;flex-shrink:0;
+  }
+  .theme-toggle .knob{
+    position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;
+    background:var(--ink);display:flex;align-items:center;justify-content:center;
+    transition:left .25s cubic-bezier(.4,0,.2,1), background .25s ease;
+  }
+  [data-theme="dark"] .theme-toggle .knob{left:28px;background:var(--brass);}
+  .theme-toggle .knob svg{width:13px;height:13px;}
+  .theme-toggle .knob svg.sun{stroke:var(--paper);fill:none;display:block;}
+  .theme-toggle .knob svg.moon{stroke:#1B1812;fill:none;display:none;}
+  [data-theme="dark"] .theme-toggle .knob svg.sun{display:none;}
+  [data-theme="dark"] .theme-toggle .knob svg.moon{display:block;}
+
+  .bell-btn{
+    position:relative;width:38px;height:38px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--surface);border:1px solid var(--hairline);cursor:pointer;flex-shrink:0;
+  }
+  .bell-btn:active{transform:scale(0.92);}
+  .bell-btn svg{width:17px;height:17px;stroke:var(--ink);fill:none;}
+  .bell-dot{
+    position:absolute;top:6px;right:6px;width:9px;height:9px;border-radius:50%;
+    background:var(--signal);border:2px solid var(--paper);
+    box-shadow:0 0 0 0 rgba(255,45,107,0.5);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,45,107,.5);}50%{box-shadow:0 0 0 5px rgba(255,45,107,0);}}
+
+  /* ============ BOARDING-PASS HERO (per screen) ============ */
+  .pass{
+    margin:14px 18px 0;
+    background:var(--surface-2);
+    color:var(--on-surface-2);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .pass-top{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    padding:18px 20px 14px;
+  }
+  .pass-eyebrow{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.55;margin-bottom:6px;}
+  .pass-title{font-family:'Cinzel',serif;font-weight:600;font-size:21px;letter-spacing:0.01em;line-height:1.15;}
+  .pass-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;opacity:0.85;margin-top:5px;}
+  .pass-seal{
+    width:46px;height:46px;border-radius:50%;flex-shrink:0;
+    background:radial-gradient(circle at 35% 30%, var(--brass) 0%, var(--brass-deep) 75%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 10px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.45);
+  }
+  .pass-seal span{font-family:'Cinzel',serif;font-size:9px;font-weight:700;color:#1B1812;letter-spacing:0.02em;text-align:center;line-height:1.1;}
+  .pass-perf{
+    position:relative;height:1px;margin:0 20px;
+    background:repeating-linear-gradient(to right, rgba(255,255,255,0.22) 0 6px, transparent 6px 12px);
+  }
+  .pass-perf::before, .pass-perf::after{
+    content:'';position:absolute;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--paper);
+  }
+  .pass-perf::before{left:-29px;}
+  .pass-perf::after{right:-29px;}
+  .pass-bottom{
+    display:flex;padding:14px 20px 18px;gap:18px;
+  }
+  .pass-field{flex:1;}
+  .pass-field-label{font-size:9px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.5;margin-bottom:4px;}
+  .pass-field-value{font-size:13px;font-weight:700;font-family:'Lato',sans-serif;}
+  .pass-field-value.signal{color:var(--signal);}
+
+  /* ============ SCREEN STACK ============ */
+  .screen-stack{flex:1;position:relative;overflow:hidden;margin-top:14px;}
+  .screen{
+    position:absolute;inset:0;overflow-y:auto;padding:0 18px 110px;
+    opacity:0;transform:translateY(10px);pointer-events:none;
+    transition:opacity .22s ease, transform .22s ease;
+  }
+  .screen.active{opacity:1;transform:translateY(0);pointer-events:auto;}
+  .screen::-webkit-scrollbar{display:none;}
+
+  .section-label{
+    font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted-strong);
+    margin:22px 0 13px;font-weight:800;display:flex;align-items:center;gap:8px;
+  }
+  .section-label::after{content:'';flex:1;height:1px;background:var(--hairline-strong);}
+
+  /* ---- DASHBOARD: live strip ---- */
+  .live-strip{
+    background:var(--signal);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin-top:16px;
+    color:#fff;
+    box-shadow:0 12px 26px rgba(255,45,107,0.32);
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+  }
+  .live-strip::before{
+    content:'';position:absolute;top:-30%;right:-10%;width:140px;height:140px;border-radius:50%;
+    background:rgba(255,255,255,0.12);
+  }
+  .live-strip-tag{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;opacity:0.92;}
+  .live-strip-tag .dot{width:7px;height:7px;border-radius:50%;background:#fff;animation:flicker 1.5s infinite;}
+  @keyframes flicker{0%,100%{opacity:1;}50%{opacity:0.3;}}
+  .live-strip-title{font-size:17px;font-weight:800;margin-bottom:4px;line-height:1.3;}
+  .live-strip-meta{font-size:12.5px;opacity:0.88;}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--hairline);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:18px;
+    margin-bottom:14px;
+  }
+  .card-eyebrow{
+    font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted-strong);
+    margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;font-weight:700;
+  }
+  .card-eyebrow a{color:var(--signal);text-decoration:none;font-size:11px;font-weight:800;}
+
+  .next-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--hairline);align-items:flex-start;}
+  .next-item:last-child{border-bottom:none;padding-bottom:0;}
+  .next-time{font-size:12.5px;font-weight:800;width:56px;flex-shrink:0;color:var(--ink-soft);padding-top:2px;}
+  .next-time small{font-size:9.5px;color:var(--muted);font-weight:700;display:block;}
+  .next-title{font-size:14px;font-weight:700;margin-bottom:3px;line-height:1.35;}
+  .next-venue{font-size:12.5px;color:var(--muted-strong);}
+
+  .ann-title{font-size:14px;font-weight:800;margin-bottom:5px;}
+  .ann-body{font-size:13px;color:var(--ink-soft);line-height:1.55;}
+  .ann-time{font-size:11px;color:var(--muted);margin-top:9px;}
+
+  /* ---- RUNDOWN ---- */
+  .day-tabs{display:flex;gap:8px;margin:18px 0 22px;overflow-x:auto;}
+  .day-tab{
+    font-size:12.5px;font-weight:700;padding:9px 16px;border-radius:20px;
+    border:1.5px solid var(--hairline-strong);color:var(--muted-strong);
+    cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s ease;
+  }
+  .day-tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+  .timeline{position:relative;padding-left:70px;}
+  .timeline::before{content:'';position:absolute;left:52px;top:6px;bottom:6px;width:2px;background:var(--hairline-strong);}
+  .t-item{position:relative;padding-bottom:28px;}
+  .t-item:last-child{padding-bottom:0;}
+  .t-time{position:absolute;left:-70px;top:0;width:54px;text-align:right;font-size:12.5px;font-weight:800;color:var(--ink-soft);line-height:1.3;}
+  .t-time small{font-size:9.5px;color:var(--muted);font-weight:700;display:block;}
+  .t-dot{position:absolute;left:-22.5px;top:3px;width:9px;height:9px;border-radius:50%;background:var(--paper);border:2px solid var(--ink-soft);}
+  .t-item.is-now .t-dot{
+    width:13px;height:13px;left:-24.5px;top:0.5px;
+    background:var(--signal);border-color:var(--signal);
+    box-shadow:0 0 0 5px var(--signal-soft);
+  }
+  .t-item.is-now .t-time{color:var(--signal);}
+  .t-content{padding-left:6px;background:transparent;}
+  .t-item.is-now .t-content{
+    background:var(--signal-soft);
+    margin-left:-12px;padding:10px 12px;border-radius:12px;
+  }
+  .t-type{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#1B1812;background:var(--brass);border-radius:5px;padding:3px 8px;margin-bottom:7px;}
+  .t-type.subtle{background:transparent;border:1.5px solid var(--hairline-strong);color:var(--muted-strong);}
+  .live-pill{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#fff;background:var(--signal);border-radius:5px;padding:3px 9px;margin-left:6px;margin-bottom:7px;}
+  .live-pill .dot{width:5px;height:5px;border-radius:50%;background:#fff;animation:flicker 1.5s infinite;}
+  .t-title{font-size:15px;font-weight:700;margin-bottom:4px;line-height:1.35;}
+  .t-venue{font-size:12.5px;color:var(--muted-strong);}
+  .t-gather{font-size:12px;color:var(--signal-deep);margin-top:6px;font-weight:800;display:flex;align-items:center;gap:5px;}
+  [data-theme="dark"] .t-gather{color:var(--signal);}
+  .t-gather::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--signal);flex-shrink:0;}
+
+  /* ---- HOTEL ---- */
+  .hk-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+  .hk-field{background:var(--surface);border:1px solid var(--hairline);border-radius:12px;padding:13px 14px;}
+  .hk-field-label{font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;font-weight:700;}
+  .hk-field-value{font-size:14px;font-weight:800;}
+  .hk-actions{display:flex;gap:9px;margin:16px 0 4px;}
+  .hk-action{
+    flex:1;text-align:center;font-size:12.5px;font-weight:800;padding:13px 0;border-radius:12px;
+    background:var(--surface);border:1.5px solid var(--hairline-strong);cursor:pointer;
+  }
+  .hk-action.primary{background:var(--signal);color:#fff;border-color:var(--signal);box-shadow:0 8px 18px rgba(255,45,107,0.28);}
+
+  .guide-step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--hairline);align-items:flex-start;}
+  .guide-step:last-child{border-bottom:none;}
+  .guide-num{
+    font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#1B1812;
+    width:26px;height:26px;border-radius:50%;background:var(--brass);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .guide-text{font-size:13.5px;line-height:1.55;color:var(--ink-soft);padding-top:3px;}
+  .guide-text b{color:var(--ink);}
+
+  .meal-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--hairline);font-size:13.5px;}
+  .meal-row:last-child{border-bottom:none;}
+  .meal-row span:first-child{color:var(--muted-strong);}
+  .meal-row span:last-child{font-weight:800;}
+
+  /* ---- PLACEHOLDER ---- */
+  .placeholder{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:60px 20px 0;color:var(--muted-strong);
+  }
+  .placeholder .ph-icon{
+    width:56px;height:56px;border-radius:50%;background:var(--surface);border:1.5px solid var(--hairline);
+    display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+  }
+  .placeholder .ph-icon svg{width:23px;height:23px;stroke:var(--signal);fill:none;}
+  .placeholder p{font-size:13.5px;line-height:1.6;max-width:230px;margin:0;}
+  .placeholder b{color:var(--ink);}
+
+  /* ============ BOTTOM NAV ============ */
+  .bottom-nav{
+    position:absolute;bottom:0;left:0;right:0;
+    background:var(--paper);border-top:1px solid var(--hairline);
+    display:flex;justify-content:space-around;padding:11px 4px 16px;z-index:20;
+  }
+  .nav-item{
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+    color:var(--muted);flex:1;cursor:pointer;position:relative;padding-top:4px;
+  }
+  .nav-item svg{width:19px;height:19px;stroke:currentColor;fill:none;}
+  .nav-item span{font-size:9.5px;font-weight:700;}
+  .nav-item.active{color:var(--signal);}
+  .nav-item .nav-indicator{
+    position:absolute;top:-4px;width:18px;height:3px;border-radius:2px;
+    background:var(--signal);opacity:0;transition:opacity .15s ease;
+  }
+  .nav-item.active .nav-indicator{opacity:1;}
+
+  /* ============ BELL PANEL ============ */
+  .panel-backdrop{
+    position:absolute;inset:0;background:rgba(0,0,0,0.4);
+    opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:40;
+  }
+  .panel-backdrop.open{opacity:1;pointer-events:auto;}
+  .updates-panel{
+    position:absolute;top:0;right:0;width:88%;max-width:330px;height:100%;
+    background:var(--paper);border-left:1px solid var(--hairline);
+    box-shadow:-12px 0 40px rgba(0,0,0,0.2);
+    transform:translateX(100%);transition:transform .26s cubic-bezier(.4,0,.2,1);
+    z-index:41;display:flex;flex-direction:column;
+  }
+  .updates-panel.open{transform:translateX(0);}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;padding:22px 18px 14px;border-bottom:1px solid var(--hairline);flex-shrink:0;}
+  .panel-head h3{font-family:'Cinzel',serif;font-weight:600;font-size:17px;margin:0;}
+  .panel-close{width:30px;height:30px;border-radius:50%;background:var(--surface);border:1px solid var(--hairline);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .panel-close svg{width:13px;height:13px;stroke:var(--ink);}
+  .panel-body{flex:1;overflow-y:auto;padding:8px 18px 30px;}
+  .update-item{display:flex;gap:12px;padding:15px 0;border-bottom:1px solid var(--hairline);}
+  .update-item:last-child{border-bottom:none;}
+  .u-icon{width:36px;height:36px;border-radius:50%;background:var(--surface);border:1.5px solid var(--hairline);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .u-icon svg{width:15px;height:15px;stroke:var(--ink-soft);fill:none;}
+  .update-item.unread .u-icon{border-color:var(--signal);background:var(--signal-soft);}
+  .update-item.unread .u-icon svg{stroke:var(--signal-deep);}
+  .u-dot-wrap{position:relative;}
+  .u-unread-dot{width:8px;height:8px;border-radius:50%;background:var(--signal);position:absolute;top:-2px;right:-2px;border:2px solid var(--paper);}
+  .u-title{font-size:13px;font-weight:800;margin-bottom:3px;line-height:1.4;}
+  .u-body{font-size:12.5px;color:var(--muted-strong);line-height:1.5;margin-bottom:5px;}
+  .u-meta{font-size:10.5px;color:var(--muted);font-weight:600;}
+
+  .meta-note{width:390px;margin-top:18px;text-align:center;font-size:11.5px;color:rgba(27,24,18,0.5);}
+
+  @media (max-width:480px){
+    .app-frame{width:100%;max-width:390px;height:92vh;border-radius:26px;}
+    .meta-note{width:100%;max-width:390px;}
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex;flex-direction:column;align-items:center;">
+  <div class="app-frame" id="appFrame" data-theme="light">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-seal"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="brand-text">
+          <span class="brand-mark">CSCD</span>
+          <span class="brand-sub">Jakarta 2026</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <div class="theme-toggle" id="themeToggle" role="button" aria-label="Toggle dark mode">
+          <div class="knob">
+            <svg class="sun" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <svg class="moon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </div>
+        </div>
+        <div class="bell-btn" id="bellBtn">
+          <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="bell-dot" id="bellDot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOARDING PASS HERO (changes per screen) -->
+    <div class="pass" id="passHero">
+      <div class="pass-top">
+        <div>
+          <div class="pass-eyebrow">Delegate credential</div>
+          <div class="pass-title" id="passTitle">Amara Wirjawan</div>
+          <div class="pass-sub" id="passSub">"Bridging the region, one session at a time."</div>
+        </div>
+        <div class="pass-seal"><span>CSCD<br>2026</span></div>
+      </div>
+      <div class="pass-perf"></div>
+      <div class="pass-bottom" id="passFields">
+        <div class="pass-field"><div class="pass-field-label">Delegate ID</div><div class="pass-field-value">FR-2291</div></div>
+        <div class="pass-field"><div class="pass-field-label">Hotel</div><div class="pass-field-value">Grand Sahid · 412</div></div>
+        <div class="pass-field"><div class="pass-field-label">Status</div><div class="pass-field-value signal">Day 1 · Live</div></div>
+      </div>
+    </div>
+
+    <!-- SCREENS -->
+    <div class="screen-stack">
+
+      <!-- DASHBOARD -->
+      <div class="screen active" data-screen="dashboard">
+        <div class="live-strip" data-goto="rundown">
+          <div class="live-strip-tag"><span class="dot"></span>Happening now</div>
+          <div class="live-strip-title">Plenary: Regional Cooperation</div>
+          <div class="live-strip-meta">Cendrawasih Hall · until 3:30 PM</div>
+        </div>
+
+        <div class="section-label">Up next</div>
+        <div class="card">
+          <div class="next-item">
+            <div class="next-time">4:00<small>PM</small></div>
+            <div>
+              <div class="next-title">Institutional Visit — Ministry of Foreign Affairs</div>
+              <div class="next-venue">Gather 3:30 PM, Main Lobby</div>
+            </div>
+          </div>
+          <div class="next-item">
+            <div class="next-time">7:30<small>PM</small></div>
+            <div>
+              <div class="next-title">Welcome Gala Dinner</div>
+              <div class="next-venue">Hotel Ballroom, Level 3</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Latest update</div>
+        <div class="card">
+          <div class="ann-title">Lobby gathering moved up</div>
+          <div class="ann-body">Please gather in the Main Lobby at 3:30 PM sharp — the bus to the Ministry departs early today.</div>
+          <div class="ann-time">Posted 12 minutes ago</div>
+        </div>
+
+        <div class="section-label">Your stay</div>
+        <div class="card" style="cursor:pointer;" data-goto="hotel">
+          <div class="card-eyebrow">Grand Sahid Jaya<a href="#">Check-in →</a></div>
+          <div class="next-venue">Room 412 · Booking #FR-2291 · Check-out Sat, 11:00 AM</div>
+        </div>
+      </div>
+
+      <!-- RUNDOWN -->
+      <div class="screen" data-screen="rundown">
+        <div class="day-tabs" id="dayTabs">
+          <div class="day-tab active" data-day="1">Day 1</div>
+          <div class="day-tab" data-day="2">Day 2</div>
+          <div class="day-tab" data-day="3">Day 3</div>
+          <div class="day-tab" data-day="4">Day 4</div>
+        </div>
+
+        <div class="timeline">
+          <div class="t-item">
+            <div class="t-time">9:00<small>AM</small></div>
+            <div class="t-dot"></div>
+            <div class="t-content">
+              <span class="t-type subtle">Session</span>
+              <div class="t-title">Opening Ceremony</div>
+              <div class="t-venue">Cendrawasih Hall</div>
+            </div>
+          </div>
+          <div class="t-item">
+            <div class="t-time">11:00<small>AM</small></div>
+            <div class="t-dot"></div>
+            <div class="t-content">
+              <span class="t-type subtle">Session</span>
+              <div class="t-title">Keynote — Climate Diplomacy</div>
+              <div class="t-venue">Cendrawasih Hall</div>
+            </div>
+          </div>
+          <div class="t-item is-now">
+            <div class="t-time">2:30<small>PM</small></div>
+            <div class="t-dot"></div>
+            <div class="t-content">
+              <span class="t-type">Plenary</span><span class="live-pill"><span class="dot"></span>Live</span>
+              <div class="t-title">Regional Cooperation</div>
+              <div class="t-venue">Cendrawasih Hall</div>
+            </div>
+          </div>
+          <div class="t-item">
+            <div class="t-time">4:00<small>PM</small></div>
+            <div class="t-dot"></div>
+            <div class="t-content">
+              <span class="t-type subtle">Visit</span>
+              <div class="t-title">Ministry of Foreign Affairs</div>
+              <div class="t-venue">Jl. Taman Pejambon No. 6</div>
+              <div class="t-gather">Gather 3:30 PM · Main Lobby</div>
+            </div>
+          </div>
+          <div class="t-item">
+            <div class="t-time">7:30<small>PM</small></div>
+            <div class="t-dot"></div>
+            <div class="t-content">
+              <span class="t-type subtle">Dinner</span>
+              <div class="t-title">Welcome Gala Dinner</div>
+              <div class="t-venue">Hotel Ballroom, Level 3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISITS -->
+      <div class="screen" data-screen="visits">
+        <div class="placeholder">
+          <div class="ph-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <p>Visit cards land here once <b>visits.json</b> is final — place, time, address, and a map link for each program.</p>
+        </div>
+      </div>
+
+      <!-- SPEAKERS -->
+      <div class="screen" data-screen="speakers">
+        <div class="placeholder">
+          <div class="ph-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg></div>
+          <p>Speaker bios and session times appear here once the <b>speaker list</b> is shared.</p>
+        </div>
+      </div>
+
+      <!-- HOTEL -->
+      <div class="screen" data-screen="hotel">
+        <div class="section-label">Your room</div>
+        <div class="hk-grid">
+          <div class="hk-field"><div class="hk-field-label">Room</div><div class="hk-field-value">412</div></div>
+          <div class="hk-field"><div class="hk-field-label">Booking ref</div><div class="hk-field-value">FR-2291</div></div>
+          <div class="hk-field"><div class="hk-field-label">Check-in</div><div class="hk-field-value">Wed, 1:00 PM</div></div>
+          <div class="hk-field"><div class="hk-field-label">Check-out</div><div class="hk-field-value">Sat, 11:00 AM</div></div>
+        </div>
+        <div class="hk-actions">
+          <div class="hk-action primary">Open in Maps</div>
+          <div class="hk-action">Call hotel</div>
+        </div>
+
+        <div class="section-label">Guided check-in</div>
+        <div class="card" style="padding:6px 19px;">
+          <div class="guide-step"><div class="guide-num">1</div><div class="guide-text">Go to the <b>reception desk</b> in the main lobby.</div></div>
+          <div class="guide-step"><div class="guide-num">2</div><div class="guide-text">Present your <b>passport or ID</b> to staff.</div></div>
+          <div class="guide-step"><div class="guide-num">3</div><div class="guide-text">Staff will find you on the <b>delegate list</b>.</div></div>
+          <div class="guide-step"><div class="guide-num">4</div><div class="guide-text">State your program name: <b>"CSCD Jakarta 2026."</b></div></div>
+          <div class="guide-step"><div class="guide-num">5</div><div class="guide-text">Receive your <b>room allocation</b> and key.</div></div>
+        </div>
+
+        <div class="section-label">Meals &amp; WiFi</div>
+        <div class="card">
+          <div class="meal-row"><span>Meal plan</span><span>Breakfast &amp; Dinner</span></div>
+          <div class="meal-row"><span>WiFi network</span><span>CSCD-Guest</span></div>
+          <div class="meal-row"><span>WiFi password</span><span>jakarta2026</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BELL PANEL -->
+    <div class="panel-backdrop" id="panelBackdrop"></div>
+    <div class="updates-panel" id="updatesPanel">
+      <div class="panel-head">
+        <h3>Updates</h3>
+        <div class="panel-close" id="panelClose"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+      </div>
+      <div class="panel-body">
+        <div class="update-item unread">
+          <div class="u-dot-wrap"><div class="u-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div><div class="u-unread-dot"></div></div>
+          <div>
+            <div class="u-title">Lobby gathering moved up</div>
+            <div class="u-body">Gather in the Main Lobby at 3:30 PM — the bus departs early today.</div>
+            <div class="u-meta">12 min ago · Announcement</div>
+          </div>
+        </div>
+        <div class="update-item unread">
+          <div class="u-dot-wrap"><div class="u-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="u-unread-dot"></div></div>
+          <div>
+            <div class="u-title">Starts in 1 hour</div>
+            <div class="u-body">Institutional Visit — Ministry of Foreign Affairs begins at 4:00 PM.</div>
+            <div class="u-meta">38 min ago · Reminder</div>
+          </div>
+        </div>
+        <div class="update-item">
+          <div class="u-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <div>
+            <div class="u-title">Welcome to CSCD Jakarta 2026</div>
+            <div class="u-body">Your delegate account is ready. Check the Dashboard each morning for the day's plan.</div>
+            <div class="u-meta">Yesterday · Announcement</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+      <div class="nav-item active" data-goto="dashboard">
+        <div class="nav-indicator"></div>
+        <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+        <span>Dashboard</span>
+      </div>
+      <div class="nav-item" data-goto="rundown">
+        <div class="nav-indicator"></div>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span>Rundown</span>
+      </div>
+      <div class="nav-item" data-goto="visits">
+        <div class="nav-indicator"></div>
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Visits</span>
+      </div>
+      <div class="nav-item" data-goto="speakers">
+        <div class="nav-indicator"></div>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg>
+        <span>Speakers</span>
+      </div>
+      <div class="nav-item" data-goto="hotel">
+        <div class="nav-indicator"></div>
+        <svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7"/></svg>
+        <span>Hotel</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="meta-note">Boarding-pass header updates per screen. Tap nav, the bell, or the theme switch.</div>
+</div>
+
+<script>
+  const frame = document.getElementById('appFrame');
+  const themeToggle = document.getElementById('themeToggle');
+  const bellBtn = document.getElementById('bellBtn');
+  const bellDot = document.getElementById('bellDot');
+  const panel = document.getElementById('updatesPanel');
+  const backdrop = document.getElementById('panelBackdrop');
+  const panelClose = document.getElementById('panelClose');
+  const navItems = document.querySelectorAll('.nav-item');
+  const screens = document.querySelectorAll('.screen');
+  const dayTabs = document.querySelectorAll('.day-tab');
+  const passTitle = document.getElementById('passTitle');
+  const passSub = document.getElementById('passSub');
+  const passFields = document.getElementById('passFields');
+
+  const passContent = {
+    dashboard: {
+      title: 'Amara Wirjawan',
+      sub: '"Bridging the region, one session at a time."',
+      fields: [
+        ['Delegate ID','FR-2291'],
+        ['Hotel','Grand Sahid · 412'],
+        ['Status','Day 1 · Live', true]
+      ]
+    },
+    rundown: {
+      title: 'Day 1 Rundown',
+      sub: '"Five stops, one program."',
+      fields: [
+        ['Sessions','3 today'],
+        ['Next gather','3:30 PM'],
+        ['Venue','Cendrawasih Hall', true]
+      ]
+    },
+    visits: {
+      title: 'Institutional Visits',
+      sub: '"Where the delegation calls on the city."',
+      fields: [
+        ['Programs','Pending'],
+        ['Scope','All delegates'],
+        ['Status','Awaiting data', true]
+      ]
+    },
+    speakers: {
+      title: 'Speakers',
+      sub: '"The voices of CSCD Jakarta."',
+      fields: [
+        ['Confirmed','Pending'],
+        ['Sessions','Linked to rundown'],
+        ['Status','Awaiting data', true]
+      ]
+    },
+    hotel: {
+      title: 'Grand Sahid Jaya',
+      sub: '"Your base for the week."',
+      fields: [
+        ['Room','412'],
+        ['Booking ref','FR-2291'],
+        ['Check-out','Sat, 11 AM', true]
+      ]
+    }
+  };
+
+  function renderPass(name){
+    const data = passContent[name];
+    if(!data) return;
+    passTitle.textContent = data.title;
+    passSub.textContent = data.sub;
+    passFields.innerHTML = data.fields.map(f =>
+      `<div class="pass-field"><div class="pass-field-label">${f[0]}</div><div class="pass-field-value${f[2] ? ' signal' : ''}">${f[1]}</div></div>`
+    ).join('');
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const next = frame.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    frame.setAttribute('data-theme', next);
+  });
+
+  function openPanel(){
+    panel.classList.add('open');
+    backdrop.classList.add('open');
+    bellDot.style.display = 'none';
+  }
+  function closePanel(){
+    panel.classList.remove('open');
+    backdrop.classList.remove('open');
+  }
+  bellBtn.addEventListener('click', openPanel);
+  panelClose.addEventListener('click', closePanel);
+  backdrop.addEventListener('click', closePanel);
+
+  function goTo(name){
+    screens.forEach(s => s.classList.toggle('active', s.dataset.screen === name));
+    navItems.forEach(n => n.classList.toggle('active', n.dataset.goto === name));
+    renderPass(name);
+  }
+  document.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', () => goTo(el.dataset.goto));
+  });
+
+  dayTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      dayTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
