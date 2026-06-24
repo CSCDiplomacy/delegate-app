@@ -227,6 +227,44 @@ a { color: inherit; text-decoration: none; }
 }
 .section-label::after { content: ''; flex: 1; height: 1px; background: var(--hairline-strong); }
 
+/* Frankfurt clock */
+.dash-clock {
+  border-radius: var(--radius);
+  background: #001224;
+  color: #fff;
+  padding: 16px 20px 14px;
+  margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 8px 22px rgba(0,18,36,0.22);
+  position: relative; overflow: hidden;
+}
+.dash-clock::after {
+  content: ''; position: absolute; right: -20px; top: -30px;
+  width: 120px; height: 120px; border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+.dash-clock-left { display: flex; flex-direction: column; gap: 3px; }
+.dash-clock-city {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; opacity: 0.55;
+}
+.dash-clock-time {
+  font-family: var(--font-display);
+  font-size: 32px; font-weight: 700; letter-spacing: -0.01em;
+  line-height: 1; color: #fff;
+}
+.dash-clock-time small {
+  font-size: 16px; font-weight: 500; opacity: 0.75; margin-left: 3px;
+}
+.dash-clock-right { text-align: right; display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
+.dash-clock-date {
+  font-size: 13px; font-weight: 600; opacity: 0.9;
+}
+.dash-clock-day {
+  font-size: 11px; opacity: 0.5; letter-spacing: 0.04em;
+}
+
 /* live strip */
 .live-strip {
   background: var(--signal); border-radius: var(--radius); padding: 16px 18px; margin-top: 16px;

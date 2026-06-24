@@ -126,6 +126,8 @@
     refreshNotifications();
     setInterval(refreshNotifications, 60000);
     setInterval(() => { if (current === 'rundown') renderRundown(); if (current === 'dashboard') renderDashboard(); }, 60000);
+    renderClock();
+    setInterval(renderClock, 1000);
   }
   async function loadProfile() { try { profile = await api('/me/profile'); } catch (e) { profile = { name: 'Delegate' }; } }
   async function loadRundown() { try { rundown = await getJson('/api/rundown'); } catch (e) { rundown = { days: [] }; } }
@@ -185,6 +187,29 @@
     el('pass-sub').textContent = s[2];
     el('pass-sub').style.display = s[2] ? '' : 'none';
     passFields(s[3]);
+  }
+
+  /* ===================== FRANKFURT CLOCK ===================== */
+  const _clockTZ = 'Europe/Berlin';
+  const _clockTimeFmt = new Intl.DateTimeFormat('en-GB', { timeZone: _clockTZ, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  const _clockDateFmt = new Intl.DateTimeFormat('en-GB', { timeZone: _clockTZ, day: 'numeric', month: 'short', year: 'numeric' });
+  const _clockDayFmt  = new Intl.DateTimeFormat('en-GB', { timeZone: _clockTZ, weekday: 'long' });
+  function renderClock() {
+    const c = el('dash-clock'); if (!c) return;
+    const now = new Date();
+    const timeParts = Object.fromEntries(_clockTimeFmt.formatToParts(now).map((x) => [x.type, x.value]));
+    const h = +timeParts.hour, m = timeParts.minute, s = timeParts.second;
+    const ap = h >= 12 ? 'PM' : 'AM';
+    const hh = String(((h + 11) % 12) + 1);
+    c.innerHTML = `
+      <div class="dash-clock-left">
+        <div class="dash-clock-city">Frankfurt &nbsp;·&nbsp; CET/CEST</div>
+        <div class="dash-clock-time">${hh}:${m}:${s}<small>${ap}</small></div>
+      </div>
+      <div class="dash-clock-right">
+        <div class="dash-clock-date">${_clockDateFmt.format(now)}</div>
+        <div class="dash-clock-day">${_clockDayFmt.format(now)}</div>
+      </div>`;
   }
 
   /* ===================== DASHBOARD ===================== */
