@@ -122,7 +122,8 @@
     const nm = (profile.name || 'Delegate');
     if (el('side-user')) el('side-user').innerHTML = `<b>${esc(nm)}</b><span>${esc(profile.email || '')}</span>`;
     if (el('menu-user')) el('menu-user').innerHTML = `${esc(nm)}<span>${esc(profile.email || '')}</span>`;
-    switchScreen('dashboard');
+    const initialTab = NAV_ORDER.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'dashboard';
+    switchScreen(initialTab);
     refreshNotifications();
     setInterval(refreshNotifications, 60000);
     setInterval(() => { if (current === 'rundown') renderRundown(); if (current === 'dashboard') renderDashboard(); }, 60000);
@@ -145,7 +146,8 @@
   const NAV_ORDER = ['dashboard', 'rundown', 'visits', 'speakers', 'schedule', 'hotel', 'contact'];
   function setActiveNav(name) { $$('[data-goto]').forEach((n) => { if (n.classList.contains('nav-link') || n.classList.contains('nav-item')) n.classList.toggle('active', n.dataset.goto === name); }); }
 
-  function switchScreen(name) {
+  function switchScreen(name, { pushHistory = true } = {}) {
+    if (!NAV_ORDER.includes(name)) name = 'dashboard';
     const fromIdx = NAV_ORDER.indexOf(current);
     const toIdx   = NAV_ORDER.indexOf(name);
     const goingLeft = toIdx < fromIdx;
@@ -169,7 +171,13 @@
     if (name === 'schedule') renderSchedule();
     if (name === 'contact' && !rendered.contact) renderContact();
     if (window.innerWidth < 960) window.scrollTo(0, 0);
+    if (pushHistory) history.pushState({ tab: name }, '', '#' + name);
   }
+
+  window.addEventListener('popstate', (e) => {
+    const tab = e.state?.tab || (location.hash.slice(1)) || 'dashboard';
+    if (NAV_ORDER.includes(tab)) switchScreen(tab, { pushHistory: false });
+  });
 
   function passFields(arr) {
     el('pass-fields').innerHTML = arr.map((f) =>
@@ -550,34 +558,6 @@
   function showModal(t, b) { el('modal-title').textContent = t; el('modal-body').textContent = b; el('modal-overlay').classList.add('show'); }
   function closeModal() { el('modal-overlay').classList.remove('show'); }
 
-  /* ===================== PWA INSTALL ===================== */
-  let _pwaPrompt = null;
-  const PWA_DISMISS_KEY  = 'cipes_pwa_dismissed'; // localStorage — permanent "never show"
-  const PWA_SNOOZE_KEY   = 'cipes_pwa_snooze';    // sessionStorage — "later" (this session only)
-
-  function showInstallUI() {
-    if (localStorage.getItem(PWA_DISMISS_KEY)) return;
-    if (sessionStorage.getItem(PWA_SNOOZE_KEY)) return;
-    const banner = el('pwa-install-banner');
-    if (banner) banner.style.display = 'flex';
-  }
-
-  function hideInstallUI() {
-    const banner = el('pwa-install-banner');
-    if (banner) banner.style.display = 'none';
-  }
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    _pwaPrompt = e;
-    showInstallUI();
-  });
-
-  // If already running as installed PWA, permanently suppress the banner
-  if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
-    localStorage.setItem(PWA_DISMISS_KEY, '1');
-  }
-
   /* ===================== EVENTS ===================== */
   function wire() {
     el('btn-login').onclick = doLogin;
@@ -627,95 +607,15 @@
     addSwipeClose(el('rail'),        'right'); // updates rail: swipe right to close
     addSwipeClose(el('menu-drawer'), 'left');  // menu drawer: swipe left to close
 
-    async function triggerPwaInstall() {
-      if (!_pwaPrompt) return;
-      _pwaPrompt.prompt();
-      const { outcome } = await _pwaPrompt.userChoice;
-      _pwaPrompt = null;
-      if (outcome === 'accepted') localStorage.setItem(PWA_DISMISS_KEY, '1');
-      hideInstallUI();
-    }
-
-    const btnInstall = el('btn-pwa-install');
-    const btnLater   = el('btn-pwa-later');
-    const btnNever   = el('btn-pwa-never');
-
-    if (btnInstall) btnInstall.onclick = triggerPwaInstall;
-
-    if (btnLater) btnLater.onclick = () => {
-      // Snooze for this session only — banner returns next time they open the app
-      sessionStorage.setItem(PWA_SNOOZE_KEY, '1');
-      hideInstallUI();
-    };
-
-    if (btnNever) btnNever.onclick = () => {
-      // Permanent dismissal — never show on this device again
-      localStorage.setItem(PWA_DISMISS_KEY, '1');
-      hideInstallUI();
-    };
-
-    // Permanent install button — always visible at bottom of home tab
-    const btnPermanent = el('btn-pwa-permanent');
-    if (btnPermanent) {
-      if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
-        // Already installed — show confirmation state
-        btnPermanent.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> App already installed on this device`;
-        btnPermanent.classList.add('installed');
-        btnPermanent.disabled = true;
-      } else {
-        btnPermanent.onclick = async () => {
-          if (_pwaPrompt) {
-            _pwaPrompt.prompt();
-            const { outcome } = await _pwaPrompt.userChoice;
-            _pwaPrompt = null;
-            if (outcome === 'accepted') {
-              localStorage.setItem(PWA_DISMISS_KEY, '1');
-              hideInstallUI();
-              btnPermanent.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> App installed — open from your home screen`;
-              btnPermanent.classList.add('installed');
-              btnPermanent.disabled = true;
-            }
-          } else {
-            // Browser doesn't support install prompt (e.g. already installed or iOS Safari)
-            showModal('Install this app', 'Tap the Share button in your browser, then choose "Add to Home Screen" to install the app.');
-          }
-        };
-      }
-    }
-
     document.addEventListener('click', (e) => {
+      const cal = e.target.closest('.cal-btn'); if (cal) { e.preventDefault(); addToCalendar(cal); return; }
       const go = e.target.closest('[data-goto]'); if (go) { switchScreen(go.dataset.goto); closeDrawers(); return; }
-      const day = e.target.closest('[data-day]'); if (day) { activeDay = +day.dataset.day; renderRundown(); return; }
+      const day = e.target.closest('.day-tab[data-day]'); if (day) { activeDay = +day.dataset.day; renderRundown(); return; }
       const fav = e.target.closest('[data-fav]'); if (fav) { e.preventDefault(); toggleFav(fav.dataset.fav, fav); return; }
       const spk = e.target.closest('[data-spk]'); if (spk) { showSpeaker(+spk.dataset.spk); return; }
-      const cal = e.target.closest('.cal-btn'); if (cal) { e.preventDefault(); addToCalendar(cal); return; }
     });
   }
 
-  if ('serviceWorker' in navigator) {
-    // Self-updating: when a new worker takes control, reload once so fresh
-    // HTML/CSS/JS show immediately (no manual hard-refresh needed).
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (refreshing) return;
-      refreshing = true;
-      window.location.reload();
-    });
-    window.addEventListener('load', async () => {
-      try {
-        const reg = await navigator.serviceWorker.register('/sw.js');
-        reg.update();
-        // If a new worker is already waiting, ask it to activate now.
-        if (reg.waiting) reg.waiting.postMessage('skip-waiting');
-        reg.addEventListener('updatefound', () => {
-          const nw = reg.installing;
-          if (nw) nw.addEventListener('statechange', () => {
-            if (nw.state === 'installed' && reg.waiting) reg.waiting.postMessage('skip-waiting');
-          });
-        });
-      } catch (e) { /* ignore */ }
-    });
-  }
 
   wire();
   initSupabase();

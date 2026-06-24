@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#001224" />
   <title>YEF Frankfurt 2026 — CIPES</title>
-  <link rel="manifest" href="/manifest.json" />
   <link rel="icon" href="/img/icon-192.png" />
   <link rel="apple-touch-icon" href="/img/icon-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,12 +20,11 @@
 
   <!-- ===================== LOGIN ===================== -->
   <div id="view-login" class="login-wrap">
+    <div class="login-above">
+      <img src="/img/cipes-logo.png" class="brand-logo" alt="CIPES" />
+      <span class="brand-sub" id="login-event">YEF Frankfurt 2026</span>
+    </div>
     <div class="login-card">
-      <div class="login-head">
-        <img src="/img/cipes-logo.png" class="brand-logo" alt="CIPES" />
-        <span class="brand-sub" id="login-event">YEF Frankfurt 2026</span>
-      </div>
-      <div class="login-perf"></div>
       <div class="login-body">
         <div id="login-form">
           <h1>Delegate sign in</h1>
@@ -141,23 +139,6 @@
           <!-- DASHBOARD -->
           <section class="screen active" data-screen="dashboard">
             <div id="dash-clock" class="dash-clock"></div>
-            <!-- PWA install prompt — shown below the clock, only when browser supports it -->
-            <div id="pwa-install-banner" class="pwa-install-banner" style="display:none">
-              <div class="pwa-install-top">
-                <div class="pwa-install-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13M8 11l4 4 4-4"/><path d="M4 17v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1"/></svg>
-                </div>
-                <div class="pwa-install-text">
-                  <strong>Add to Home Screen</strong>
-                  <span>Get instant access — no browser needed</span>
-                </div>
-              </div>
-              <div class="pwa-install-actions">
-                <button class="btn brass small" id="btn-pwa-install">Install</button>
-                <button class="btn ghost small" id="btn-pwa-later">Later</button>
-                <button class="pwa-never-btn" id="btn-pwa-never">Don't show again</button>
-              </div>
-            </div>
             <div id="dash-live"></div>
             <div class="dash-grid">
               <div>
@@ -175,11 +156,6 @@
             </div>
             <div class="section-label">Latest update</div>
             <div id="dash-update" class="card"></div>
-            <!-- Permanent install button — always visible at bottom of home tab -->
-            <button class="pwa-permanent-btn" id="btn-pwa-permanent">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13M8 11l4 4 4-4"/><path d="M4 17v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1"/></svg>
-              Install App on this Device
-            </button>
           </section>
 
           <!-- RUNDOWN -->
