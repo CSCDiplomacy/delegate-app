@@ -323,21 +323,56 @@
           ${it.gather_time ? `<div class="t-gather">Gather ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
             ${map ? `<a class="chip" href="${map}" target="_blank" rel="noopener">${ic(P.mapPin,12)}Open in Maps</a>` : ''}
-            <a class="chip" href="${icsHref(day, it)}" target="_blank" rel="noopener">${ic(P.calendar,12)}Add to calendar</a>
+            <button class="chip cal-btn" data-day="${esc(day.date)}" data-title="${esc(it.title)}" data-time="${esc(it.time)}" data-venue="${esc(it.venue||'')}" data-dur="${it.duration_min||60}">${ic(P.calendar,12)}Add to calendar</button>
           </div>
         </div>
       </div>`;
     }).join('');
   }
-  function icsHref(day, it) {
-    const p = new URLSearchParams({
-      title: it.title,
-      date: day.date,
-      time: it.time,
-      venue: it.venue || '',
-      duration: String(it.duration_min || 60),
-    });
-    return '/api/ics?' + p.toString();
+  function buildIcsContent(date, time, title, venue, durMin) {
+    const dt = date.replace(/-/g, '');
+    const [h, m] = time.split(':');
+    const endMin = parseInt(h,10)*60 + parseInt(m,10) + (parseInt(durMin,10)||60);
+    const eh = String(Math.floor(endMin/60)%24).padStart(2,'0');
+    const em = String(endMin%60).padStart(2,'0');
+    const uid = `${dt}-${h}${m}-cipes@thecipes.org`;
+    return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CIPES//YEF Frankfurt 2026//EN','METHOD:PUBLISH',
+      'BEGIN:VEVENT',`UID:${uid}`,`DTSTART:${dt}T${h}${m}00`,`DTEND:${dt}T${eh}${em}00`,
+      `SUMMARY:${title}`,`LOCATION:${venue}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  }
+  function addToCalendar(btn) {
+    const { day: date, title, time, venue, dur } = btn.dataset;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      const ics = buildIcsContent(date, time, title, venue, dur);
+      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = ''; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      return;
+    }
+    // Desktop: show picker dropdown
+    const existing = document.querySelector('.cal-picker');
+    if (existing) { existing.remove(); if (existing._src === btn) return; }
+    const dt = date.replace(/-/g,'');
+    const [h,m] = time.split(':');
+    const endMin = parseInt(h,10)*60+parseInt(m,10)+(parseInt(dur,10)||60);
+    const eh = String(Math.floor(endMin/60)%24).padStart(2,'0');
+    const em = String(endMin%60).padStart(2,'0');
+    const start = `${dt}T${h}${m}00Z`, end = `${dt}T${eh}${em}00Z`;
+    const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&location=${encodeURIComponent(venue)}`;
+    const olUrl = `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(title)}&startdt=${date}T${h}:${m}:00&enddt=${date}T${eh}:${em}:00&location=${encodeURIComponent(venue)}&path=/calendar/action/compose&rru=addevent`;
+    const ics = buildIcsContent(date, time, title, venue, dur);
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const dlUrl = URL.createObjectURL(blob);
+    const picker = document.createElement('div');
+    picker.className = 'cal-picker'; picker._src = btn;
+    picker.innerHTML = `<a href="${gcUrl}" target="_blank" rel="noopener">Google Calendar</a><a href="${olUrl}" target="_blank" rel="noopener">Outlook / Office 365</a><a href="${dlUrl}" download="${title.replace(/[^a-z0-9]/gi,'_').toLowerCase()}.ics">Download .ics</a>`;
+    btn.parentNode.style.position = 'relative';
+    btn.parentNode.appendChild(picker);
+    const close = e => { if (!picker.contains(e.target) && e.target !== btn) { picker.remove(); document.removeEventListener('click', close); URL.revokeObjectURL(dlUrl); } };
+    setTimeout(() => document.addEventListener('click', close), 0);
   }
   async function toggleFav(id, btn) {
     const adding = !favourites.has(id);
@@ -653,6 +688,7 @@
       const day = e.target.closest('[data-day]'); if (day) { activeDay = +day.dataset.day; renderRundown(); return; }
       const fav = e.target.closest('[data-fav]'); if (fav) { e.preventDefault(); toggleFav(fav.dataset.fav, fav); return; }
       const spk = e.target.closest('[data-spk]'); if (spk) { showSpeaker(+spk.dataset.spk); return; }
+      const cal = e.target.closest('.cal-btn'); if (cal) { e.preventDefault(); addToCalendar(cal); return; }
     });
   }
 
