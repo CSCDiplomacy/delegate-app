@@ -280,13 +280,20 @@
     el('dash-contact').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.phone,13)}Contact &amp; support</span><span class="link">Open →</span></div><div class="next-venue">Coordination team, venue map, feedback.</div>`;
     const sc = favourites.size;
     if (el('dash-schedule')) el('dash-schedule').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.award,13)}My programme</span><span class="link">View →</span></div><div class="next-venue">${sc > 0 ? `★ ${sc} session${sc !== 1 ? 's' : ''} starred` : 'No sessions starred yet — tap ☆ in the Rundown.'}</div>`;
-    // latest announcement
+    // latest announcement — reuse already-fetched notifications if available
     el('dash-update').innerHTML = `<div class="ann-title">Latest update</div><div class="ann-body" id="dash-ann">—</div>`;
-    api('/announcements').then(({ announcements }) => {
+    const _renderAnn = () => {
+      const t = el('dash-ann'); if (!t) return;
+      const anns = (window._notif || []).filter((n) => n.kind === 'announcement');
+      if (anns.length) { const a = anns[0]; t.innerHTML = `<strong>${esc(a.title)}</strong><br>${esc(a.body)}`; }
+      else t.textContent = 'No announcements yet.';
+    };
+    if (window._notif) { _renderAnn(); }
+    else { api('/announcements').then(({ announcements }) => {
       const t = el('dash-ann'); if (!t) return;
       if (announcements && announcements.length) { const a = announcements[0]; t.innerHTML = `<strong>${esc(a.title)}</strong><br>${esc(a.body)}`; }
       else t.textContent = 'No announcements yet.';
-    }).catch(() => {});
+    }).catch(() => {}); }
   }
 
   /* ===================== RUNDOWN ===================== */
@@ -611,6 +618,35 @@
       localStorage.setItem(PWA_DISMISS_KEY, '1');
       hideInstallUI();
     };
+
+    // Permanent install button — always visible at bottom of home tab
+    const btnPermanent = el('btn-pwa-permanent');
+    if (btnPermanent) {
+      if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
+        // Already installed — show confirmation state
+        btnPermanent.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> App already installed on this device`;
+        btnPermanent.classList.add('installed');
+        btnPermanent.disabled = true;
+      } else {
+        btnPermanent.onclick = async () => {
+          if (_pwaPrompt) {
+            _pwaPrompt.prompt();
+            const { outcome } = await _pwaPrompt.userChoice;
+            _pwaPrompt = null;
+            if (outcome === 'accepted') {
+              localStorage.setItem(PWA_DISMISS_KEY, '1');
+              hideInstallUI();
+              btnPermanent.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> App installed — open from your home screen`;
+              btnPermanent.classList.add('installed');
+              btnPermanent.disabled = true;
+            }
+          } else {
+            // Browser doesn't support install prompt (e.g. already installed or iOS Safari)
+            showModal('Install this app', 'Tap the Share button in your browser, then choose "Add to Home Screen" to install the app.');
+          }
+        };
+      }
+    }
 
     document.addEventListener('click', (e) => {
       const go = e.target.closest('[data-goto]'); if (go) { switchScreen(go.dataset.goto); closeDrawers(); return; }

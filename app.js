@@ -104,11 +104,17 @@ app.use('/api', dataRoutes);
 // --- Static front-end -------------------------------------------------------
 app.use(
   express.static(path.join(__dirname, 'public'), {
-    maxAge: '1h',
+    maxAge: '7d',
+    etag: true,
+    lastModified: true,
     setHeaders(res, filePath) {
-      // Never cache the shell or the service worker so updates roll out.
+      // Shell and SW must never be stale — browser must revalidate every time.
       if (filePath.endsWith('index.html') || filePath.endsWith('sw.js')) {
         res.setHeader('Cache-Control', 'no-cache');
+      }
+      // Versioned/fingerprinted assets (CSS, JS, images) can cache aggressively.
+      if (filePath.endsWith('.css') || filePath.endsWith('.js') || filePath.endsWith('.png')) {
+        res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
       }
     },
   })
@@ -124,6 +130,9 @@ app.listen(PORT, () => {
   console.log(`CIPES Delegate App listening on :${PORT}`);
   // Email reminder cron (no-op if Resend isn't configured yet).
   startReminderJob();
+  // Keep the Passenger process alive between requests so cold-start delay
+  // doesn't hit the first delegate each time the process idles.
+  setInterval(() => {}, 30000);
 });
 
 module.exports = app;
