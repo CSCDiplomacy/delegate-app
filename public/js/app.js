@@ -465,13 +465,18 @@
   let _pwaPrompt = null;
   const PWA_DISMISS_KEY = 'cipes_pwa_dismissed';
 
+  function showInstallUI() {
+    if (localStorage.getItem(PWA_DISMISS_KEY)) return;
+    const banner = el('pwa-install-banner');
+    const loginBtn = el('btn-pwa-install-login');
+    if (banner) banner.style.display = 'flex';
+    if (loginBtn) loginBtn.style.display = 'flex';
+  }
+
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     _pwaPrompt = e;
-    if (!localStorage.getItem(PWA_DISMISS_KEY)) {
-      const banner = el('pwa-install-banner');
-      if (banner) banner.style.display = 'flex';
-    }
+    showInstallUI();
   });
 
   // Hide banner if app is already installed (standalone mode)
@@ -498,19 +503,29 @@
     $$('.js-menu-close').forEach((b) => b.onclick = closeDrawers);
     el('backdrop').onclick = closeDrawers;
 
-    const btnInstall = el('btn-pwa-install');
-    const btnDismiss = el('btn-pwa-dismiss');
-    if (btnInstall) btnInstall.onclick = async () => {
+    async function triggerPwaInstall() {
       if (!_pwaPrompt) return;
       _pwaPrompt.prompt();
       const { outcome } = await _pwaPrompt.userChoice;
       _pwaPrompt = null;
       if (outcome === 'accepted') localStorage.setItem(PWA_DISMISS_KEY, '1');
-      el('pwa-install-banner').style.display = 'none';
-    };
+      const banner = el('pwa-install-banner');
+      const loginBtn = el('btn-pwa-install-login');
+      if (banner) banner.style.display = 'none';
+      if (loginBtn) loginBtn.style.display = 'none';
+    }
+
+    const btnInstall = el('btn-pwa-install');
+    const btnInstallLogin = el('btn-pwa-install-login');
+    const btnDismiss = el('btn-pwa-dismiss');
+    if (btnInstall) btnInstall.onclick = triggerPwaInstall;
+    if (btnInstallLogin) btnInstallLogin.onclick = triggerPwaInstall;
     if (btnDismiss) btnDismiss.onclick = () => {
       localStorage.setItem(PWA_DISMISS_KEY, '1');
-      el('pwa-install-banner').style.display = 'none';
+      const banner = el('pwa-install-banner');
+      const loginBtn = el('btn-pwa-install-login');
+      if (banner) banner.style.display = 'none';
+      if (loginBtn) loginBtn.style.display = 'none';
     };
 
     document.addEventListener('click', (e) => {
