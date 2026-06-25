@@ -42,7 +42,7 @@ router.get('/hotel', (req, res) => {
     const hotels = data.hotels || {};
     const hotel = Object.values(hotels)[0] || null;
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+    res.setHeader('Cache-Control', 'no-cache');
     res.json({ hotel });
   } catch (e) {
     res.status(500).json({ error: 'Malformed hotels.json' });

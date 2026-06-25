@@ -1,15 +1,17 @@
 {
   "hotels": {
     "frankfurt-main": {
-      "name": "Frankfurt Hotel",
-      "address": "Frankfurt, Germany",
-      "map": "https://maps.app.goo.gl/gfyeYXZYMSDzsQGJ7",
-      "check_in": "June 25 · from 3:00 PM",
+      "name": "IntercityHotel Frankfurt Hauptbahnhof Süd",
+      "address": "Mannheimer Str. 21, 60329 Frankfurt am Main, Germany",
+      "map": "https://www.google.com/maps/search/?api=1&query=IntercityHotel%20Frankfurt%2C%20Mannheimer%20Str.%2021%2C%2060329%20Frankfurt%20am%20Main&query_place_id=0x47bd0bffaa2fef89:0x3f5224cf76f5f704",
+      "check_in": "June 25, from 3:00 PM",
       "check_out": "June 28",
-      "booking_name": "Diplomark Limited",
+      "booking_name": "Diplomark LTD",
       "wifi": "",
       "transport": [],
-      "contacts": []
+      "contacts": [
+        { "label": "Hotel front desk", "value": "+49 69 6599920", "type": "phone" }
+      ]
     }
   }
 }

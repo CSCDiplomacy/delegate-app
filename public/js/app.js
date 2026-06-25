@@ -17,7 +17,7 @@
     return String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
-  function mapsLink(q) { return q ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}` : null; }
+  function mapsLink(q) { if (!q) return null; if (/^https?:\/\//.test(q)) return q; return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`; }
 
   /* ---- SVG icon paths (24×24 Feather-style) ---- */
   const P = {
