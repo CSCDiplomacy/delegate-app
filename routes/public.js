@@ -9,7 +9,7 @@ const DATA_DIR = path.join(__dirname, '..', 'data');
 
 // Pre-load all files into memory at boot time.
 const _cache = {};
-['rundown.json', 'visits.json', 'speakers.json', 'checkin.json', 'contact.json'].forEach((file) => {
+['rundown.json', 'visits.json', 'speakers.json', 'checkin.json', 'contact.json', 'hotels.json'].forEach((file) => {
   try {
     _cache[file] = fs.readFileSync(path.join(DATA_DIR, file), 'utf8');
   } catch (e) {
@@ -34,5 +34,19 @@ router.get('/visits',   serveJson('visits.json'));
 router.get('/speakers', serveJson('speakers.json'));
 router.get('/checkin',  serveJson('checkin.json'));
 router.get('/contact',  serveJson('contact.json'));
+router.get('/hotel', (req, res) => {
+  const raw = _cache['hotels.json'];
+  if (!raw) return res.status(500).json({ error: 'Could not load hotels.json' });
+  try {
+    const data = JSON.parse(raw);
+    const hotels = data.hotels || {};
+    const hotel = Object.values(hotels)[0] || null;
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+    res.json({ hotel });
+  } catch (e) {
+    res.status(500).json({ error: 'Malformed hotels.json' });
+  }
+});
 
 module.exports = router;

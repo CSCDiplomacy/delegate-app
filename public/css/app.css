@@ -320,6 +320,27 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; -webkit-t
 .card-eyebrow { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-strong); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
 .card-eyebrow a, .card-eyebrow .link { color: var(--signal); font-size: 11px; font-weight: 800; }
 
+/* up-next label with pulse dot */
+.up-next-label { display: flex; align-items: center; gap: 8px; }
+.up-next-pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); flex-shrink: 0; animation: pulse 2s infinite; }
+
+/* next-card: individual colored bordered cards */
+.next-card { display: flex; align-items: center; gap: 12px; padding: 13px 14px 13px 18px; border-radius: 14px; background: var(--surface); border: 1px solid var(--hairline); box-shadow: var(--shadow); margin-bottom: 10px; position: relative; overflow: hidden; transition: transform .12s ease, box-shadow .12s ease; }
+.next-card:last-child { margin-bottom: 0; }
+.next-card:active { transform: scale(0.98); box-shadow: none; }
+.next-card-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 14px 0 0 14px; }
+.next-card-left { display: flex; flex-direction: column; align-items: center; width: 46px; flex-shrink: 0; }
+.next-card-time { font-size: 15px; font-weight: 900; line-height: 1.1; text-align: center; letter-spacing: -0.5px; }
+.next-card-time small { font-size: 10px; font-weight: 700; color: var(--muted); display: block; margin-top: 1px; }
+.next-soon { display: flex; align-items: center; gap: 4px; margin-top: 5px; font-size: 9px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--signal); }
+.next-soon-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--signal); flex-shrink: 0; animation: flicker 1.5s infinite; }
+.next-day-lbl { font-size: 9.5px; color: var(--muted); font-weight: 700; margin-top: 4px; text-align: center; text-transform: uppercase; letter-spacing: 0.04em; }
+.next-card-body { flex: 1; min-width: 0; }
+.next-card-title { font-size: 14px; font-weight: 700; line-height: 1.3; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.next-card-venue { font-size: 12px; color: var(--muted-strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.next-card-type { flex-shrink: 0; opacity: 0.75; }
+
+/* legacy (keep for any other uses) */
 .next-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--hairline); align-items: flex-start; }
 .next-item:last-child { border-bottom: none; padding-bottom: 0; }
 .next-time { font-size: 12.5px; font-weight: 800; width: 58px; flex-shrink: 0; color: var(--ink-soft); padding-top: 2px; }
@@ -366,7 +387,17 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; -webkit-t
 .cal-picker { position: absolute; bottom: calc(100% + 6px); left: 0; background: var(--surface); border: 1.5px solid var(--hairline-strong); border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,.14); z-index: 200; min-width: 180px; overflow: hidden; display: flex; flex-direction: column; }
 .cal-picker a { padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--ink); text-decoration: none; white-space: nowrap; }
 .cal-picker a:hover { background: var(--hairline); }
-.star-btn { background: none; border: none; font-size: 18px; line-height: 1; padding: 10px 8px; margin-left: auto; color: var(--brass-deep); min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+/* feedback textarea inside the app (not login) — override the dark-card defaults */
+.screen .field textarea { color: var(--ink); background: var(--surface); border: 1.5px solid var(--hairline-strong); border-radius: var(--radius-sm); padding: 12px 13px; font-size: 15px; font-family: var(--font-body); width: 100%; }
+.screen .field textarea::placeholder { color: var(--muted); }
+.screen .field textarea:focus { outline: none; border-color: var(--signal); }
+
+/* star button — larger + label */
+.star-btn { background: none; border: none; padding: 8px 6px; margin-left: auto; color: var(--brass-deep); min-width: 44px; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; flex-shrink: 0; }
+.star-btn .star-icon { font-size: 22px; line-height: 1; transition: transform .15s ease; }
+.star-btn.starred .star-icon { color: var(--signal); }
+.star-btn:active .star-icon { transform: scale(1.3); }
+.star-btn .star-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
 
 /* ============ VISITS / SPEAKERS / CONTACT ============ */
 .tile { background: var(--surface); border: 1px solid var(--hairline); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; margin-bottom: 14px; }

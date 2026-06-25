@@ -1,18 +1,10 @@
 {
-  "_note": "DUMMY data for use-case testing. Replace with the client's real coordination contacts, venue address and socials. `type` controls the tap action: email -> mailto, phone -> tel, url -> link.",
   "org": "Centre for Strategic & Contemporary Diplomacy (CIPES)",
-  "venue": {
-    "name": "Pullman Jakarta Central Park",
-    "address": "Podomoro City, Jl. Letjen S. Parman, Jakarta Barat 11470",
-    "map": "-6.177900,106.790600"
-  },
+  "venue": null,
   "contacts": [
-    { "label": "CIPES coordination", "value": "cscdiplomacy@gmail.com", "type": "email" },
-    { "label": "On-site coordinator", "value": "+62 811 1000 200", "type": "phone" },
-    { "label": "Emergency (24h)", "value": "+62 811 1000 201", "type": "phone" }
+    { "label": "CIPES coordination", "value": "cscdiplomacy@gmail.com", "type": "email" }
   ],
   "socials": [
-    { "label": "Website", "value": "https://thecipes.org", "type": "url" },
-    { "label": "Instagram", "value": "https://instagram.com/thecipes", "type": "url" }
+    { "label": "Website", "value": "https://thecipes.org", "type": "url" }
   ]
 }

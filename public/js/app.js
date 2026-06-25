@@ -147,7 +147,7 @@
   }
   async function loadProfile() { try { profile = await api('/me/profile'); } catch (e) { profile = { name: 'Delegate' }; } }
   async function loadRundown() { try { rundown = await getJson('/api/rundown'); } catch (e) { rundown = { days: [] }; } }
-  async function loadHotel() { try { hotelData = await api('/me/hotel'); } catch (e) { hotelData = null; } }
+  async function loadHotel() { try { hotelData = await getJson('/api/hotel'); } catch (e) { hotelData = null; } }
   function saveFavsLocal() { localStorage.setItem('cipes_favs', JSON.stringify([...favourites])); }
   function loadFavsLocal() { try { return new Set(JSON.parse(localStorage.getItem('cipes_favs') || '[]')); } catch (e) { return new Set(); } }
   async function loadFavourites() {
@@ -205,15 +205,17 @@
     const dayIdx = rundown && rundown.days ? rundown.days.findIndex((d) => d.date === today.date) : -1;
     const dayLabel = dayIdx >= 0 ? rundown.days[dayIdx].label : '—';
     const hotelName = hotelData && hotelData.hotel ? hotelData.hotel.name : '—';
-    const room = hotelData && hotelData.delegate && hotelData.delegate.room ? hotelData.delegate.room : '';
+    const checkIn = hotelData && hotelData.hotel ? (hotelData.hotel.check_in || '—') : '—';
+    const checkOut = hotelData && hotelData.hotel ? (hotelData.hotel.check_out || '—') : '—';
     const fid = profile.frankfurt_id || '—';
+    const tzDisplay = (tz || '').replace('Europe/', '').replace('Asia/', '');
     const sets = {
-      dashboard: ['Delegate credential', nm, '', [['Delegate ID', fid], ['Hotel', room ? `${hotelName.split(' ')[0]} · ${room}` : hotelName], ['Status', dayIdx >= 0 ? `${dayLabel} · Live` : 'Event soon', true]]],
-      rundown: ['Programme', `${dayLabel} Rundown`, '"The week, hour by hour."', [['Days', rundown && rundown.days ? String(rundown.days.length) : '—'], ['Timezone', (tz || '').replace('Asia/', '')], ['You are', nm.split(' ')[0], true]]],
+      dashboard: ['Delegate credential', nm, '', [['Delegate ID', fid], ['Hotel', hotelName], ['Status', dayIdx >= 0 ? `${dayLabel} · Live` : 'Event soon', true]]],
+      rundown: ['Programme', `${dayLabel} Rundown`, '"The week, hour by hour."', [['Days', rundown && rundown.days ? String(rundown.days.length) : '—'], ['Timezone', tzDisplay], ['You are', nm.split(' ')[0], true]]],
       visits: ['Institutional visits', 'Visits & Programs', '"Where the delegation calls on the city."', [['Scope', 'All delegates'], ['Maps', 'Tap to open'], ['Status', 'See list', true]]],
       speakers: ['CIPES Speakers', 'Speakers', '"The people behind the sessions."', [['Sessions', 'Linked to rundown'], ['Tap', 'For bios'], ['You are', nm.split(' ')[0], true]]],
-      hotel: ['Your stay', hotelName, '"Your base for the week."', [['Room', room || '—'], ['Booking', hotelData && hotelData.delegate ? (hotelData.delegate.booking_ref || '—') : '—'], ['Check-out', hotelData && hotelData.delegate ? (hotelData.delegate.check_out || '—') : '—', true]]],
-      contact: ['Coordination', 'Contact us', '"We are here to help."', [['Reach', 'Email or call'], ['Venue', 'Open in Maps'], ['Feedback', 'Welcome', true]]],
+      hotel: ['Your stay', hotelName, '"Your base for the week."', [['Check-in', checkIn], ['Check-out', checkOut], ['Booking', hotelData && hotelData.hotel ? (hotelData.hotel.booking_name || '—') : '—', true]]],
+      contact: ['Coordination', 'Contact us', '"We are here to help."', [['Reach', 'Email or call'], ['Feedback', 'Welcome'], ['CIPES', 'YEF Frankfurt 2026', true]]],
       schedule: ['My Programme', 'My Schedule', '"Sessions you starred."', [['Starred', favourites.size ? `${favourites.size} session${favourites.size !== 1 ? 's' : ''}` : 'None yet'], ['Source', 'Rundown ☆'], ['Type', 'Personal only', true]]],
     };
     const s = sets[name] || sets.dashboard;
@@ -288,15 +290,33 @@
         if (count >= 2) break;
       }
     }
+    const typeAccent = { visit: '#001224', keynote: '#001224', panel: '#001224', meal: '#7A5C2E', social: '#2D5A8E', workshop: '#4A3C70' };
     el('dash-next').innerHTML = ups.length
-      ? ups.map(({ day, it }) => { const s = split12(it.time); return `<div class="next-item"><div class="next-time">${esc(s.hm)}<small>${esc(s.ap)} · ${esc(day.label)}</small></div>
-        <div><div class="next-title">${esc(it.title)}</div><div class="next-venue">${esc(it.venue || '')}${it.gather_time ? ` · gather ${esc(fmt12(it.gather_time))}` : ''}</div></div></div>`; }).join('')
-      : '<div class="next-venue">No upcoming items yet.</div>';
-    // hotel
+      ? ups.map(({ day, it }, idx) => {
+        const s = split12(it.time); const accent = typeAccent[(it.type || '').toLowerCase()] || '#555';
+        const isPrimary = idx === 0;
+        const cardStyle = isPrimary ? `background:#001224;border-color:#001224;color:#F9F9F9` : '';
+        const timeStyle = isPrimary ? 'color:#D1C5A9' : '';
+        const venueStyle = isPrimary ? 'color:rgba(229,219,194,0.75)' : '';
+        return `<div class="next-card" data-goto="rundown" style="${cardStyle}">
+          ${!isPrimary ? `<div class="next-card-bar" style="background:${accent}"></div>` : ''}
+          <div class="next-card-left">
+            <div class="next-card-time" style="${timeStyle}">${esc(s.hm)}<small>${esc(s.ap)}</small></div>
+            ${isPrimary ? `<div class="next-soon" style="color:#D1C5A9"><span class="next-soon-dot" style="background:#D1C5A9"></span>Soon</div>` : `<div class="next-day-lbl">${esc(day.label)}</div>`}
+          </div>
+          <div class="next-card-body">
+            <div class="next-card-title">${esc(it.title)}</div>
+            <div class="next-card-venue" style="${venueStyle}">${esc(it.venue || '')}${it.gather_time ? ` · gather ${esc(fmt12(it.gather_time))}` : ''}</div>
+          </div>
+          <div class="next-card-type" style="color:${isPrimary ? '#D1C5A9' : accent}">${typeIcon(it.type)}</div>
+        </div>`;
+      }).join('')
+      : '<div class="next-venue" style="padding:8px 0">No upcoming items.</div>';
+    // hotel (shared for all delegates)
     if (hotelData && hotelData.hotel) {
-      const d = hotelData.delegate;
-      el('dash-hotel').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.building,13)}${esc(hotelData.hotel.name)}</span><span class="link">Check-in →</span></div>
-        <div class="next-venue">${d.room ? 'Room ' + esc(d.room) : ''}${d.booking_ref ? ' · #' + esc(d.booking_ref) : ''}${d.check_out ? ' · out ' + esc(d.check_out) : ''}</div>`;
+      const h = hotelData.hotel;
+      el('dash-hotel').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.building,13)}${esc(h.name)}</span><span class="link">Check-in →</span></div>
+        <div class="next-venue">${h.check_in ? 'In: ' + esc(h.check_in) : ''}${h.check_out ? ' · Out: ' + esc(h.check_out) : ''}</div>`;
     } else {
       el('dash-hotel').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.building,13)}Your hotel</span><span class="link">View →</span></div><div class="next-venue">Details coming soon.</div>`;
     }
@@ -342,7 +362,7 @@
         <div class="t-dot"></div>
         <div class="t-content">
           <span class="${typeCls}">${typeIcon(it.type)}${esc(it.type || 'item')}</span>${i === nowIdx ? '<span class="live-pill"><span class="dot"></span>Live</span>' : ''}
-          <div style="display:flex;align-items:flex-start;gap:8px"><div class="t-title">${esc(it.title)}</div><button class="star-btn" data-fav="${esc(id)}">${starred ? '★' : '☆'}</button></div>
+          <div style="display:flex;align-items:flex-start;gap:8px"><div class="t-title">${esc(it.title)}</div><button class="star-btn ${starred ? 'starred' : ''}" data-fav="${esc(id)}" title="${starred ? 'Remove from favourites' : 'Add to favourites'}"><span class="star-icon">${starred ? '★' : '☆'}</span><span class="star-label">${starred ? 'Saved' : 'Save'}</span></button></div>
           <div class="t-venue">${esc(it.venue || '')}</div>
           ${it.gather_time ? `<div class="t-gather">Gather ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
@@ -400,7 +420,17 @@
   }
   async function toggleFav(id, btn) {
     const adding = !favourites.has(id);
-    if (adding) { favourites.add(id); btn.textContent = '★'; } else { favourites.delete(id); btn.textContent = '☆'; }
+    if (adding) {
+      favourites.add(id);
+      btn.classList.add('starred');
+      const ic = btn.querySelector('.star-icon'); if (ic) ic.textContent = '★';
+      const lb = btn.querySelector('.star-label'); if (lb) lb.textContent = 'Saved';
+    } else {
+      favourites.delete(id);
+      btn.classList.remove('starred');
+      const ic = btn.querySelector('.star-icon'); if (ic) ic.textContent = '☆';
+      const lb = btn.querySelector('.star-label'); if (lb) lb.textContent = 'Save';
+    }
     saveFavsLocal();
     if (current === 'schedule') renderSchedule();
     try {
@@ -460,18 +490,18 @@
   async function renderHotel() {
     const root = el('hotel-content');
     root.innerHTML = skeletonCard([{w:'w100',h:'h28'},{w:'w70',h:'h12'},{w:'w45',h:'h12'}]) + skeletonCard();
-    if (!hotelData) { try { hotelData = await api('/me/hotel'); } catch (e) { hotelData = null; } }
+    if (!hotelData) { try { hotelData = await getJson('/api/hotel'); } catch (e) { hotelData = null; } }
     const checkin = await getJson('/api/checkin').catch(() => null);
     let html = '';
     if (hotelData && hotelData.hotel) {
-      const h = hotelData.hotel, d = hotelData.delegate; const map = mapsLink(h.map || h.address);
+      const h = hotelData.hotel; const map = mapsLink(h.map || h.address);
       const tel = (h.contacts || []).find((c) => c.type === 'phone');
-      html += `<div class="section-label">Your room</div><div class="hk-grid">
-        ${field('Hotel', h.name, P.building)}${field('Room', d.room, P.door)}${field('Check-in', d.check_in || h.check_in, P.logIn)}${field('Check-out', d.check_out || h.check_out, P.logOut)}${field('Booking ref', d.booking_ref || h.booking_name, P.hash)}${field('Meals', d.meals, P.coffee)}</div>
+      html += `<div class="section-label">Your stay</div><div class="hk-grid">
+        ${field('Hotel', h.name, P.building)}${field('Check-in', h.check_in, P.logIn)}${field('Check-out', h.check_out, P.logOut)}${field('Booking ref', h.booking_name, P.hash)}</div>
         <div class="hk-actions">${map ? `<a class="hk-action primary" href="${map}" target="_blank" rel="noopener">${ic(P.mapPin,15)}Open in Maps</a>` : ''}${tel ? `<a class="hk-action" href="tel:${esc(tel.value)}">${ic(P.phone,15)}Call hotel</a>` : ''}</div>`;
       if (h.wifi) html += `<div class="section-label">WiFi</div><div class="card"><div class="meal-row"><span style="display:flex;align-items:center;gap:7px">${ic(P.wifi,15)}Network</span><span>${esc(h.wifi)}</span></div></div>`;
     } else {
-      html += `<div class="card"><div class="next-venue">Your hotel details will appear here once assigned.</div></div>`;
+      html += `<div class="card"><div class="next-venue">Hotel details coming soon.</div></div>`;
     }
     if (checkin) html += `<div class="section-label">${esc(checkin.title || 'Guided check-in')}</div>
       ${checkin.check_in_note ? `<div class="card" style="padding:10px 18px"><div class="next-venue" style="font-size:0.85rem">${esc(checkin.check_in_note)}</div></div>` : ''}

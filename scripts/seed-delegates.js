@@ -11,8 +11,8 @@
 //   node scripts/seed-delegates.js delegates.csv [credentials-out.csv]
 //
 // Input CSV header (UTF-8, comma-separated):
-//   name,email,frankfurt_id,hotel_id,room,booking_ref,check_in,check_out,meals
-// Only name + email are required; the rest may be blank and filled later.
+//   SR No,Full Name,Passport,Nationality,Email,Password[,frankfurt_id,hotel_id,room,booking_ref,check_in,check_out,meals]
+// "Full Name", "Email", and "Password" are required; the rest may be blank.
 //
 // Requires SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY in the environment (.env).
 // The service-role key is server-only — never ship it to the browser.
@@ -70,8 +70,7 @@ function splitCsvLine(line) {
 }
 
 function genPassword() {
-  // 16 chars, URL-safe, no ambiguous separators.
-  return crypto.randomBytes(12).toString('base64').replace(/[+/=]/g, '').slice(0, 16);
+  return crypto.randomBytes(12).toString('base64url').slice(0, 16);
 }
 
 function csvEscape(v) {
@@ -91,20 +90,23 @@ async function main() {
   let failed = 0;
 
   for (const row of rows) {
-    const email = (row.email || '').toLowerCase();
+    // Support both old header style (email/name) and new style (Email / Full Name)
+    const email = (row['Email'] || row['email'] || '').toLowerCase();
+    const name = row['Full Name'] || row['name'] || '';
     if (!email) {
       console.warn(`Skipping row with no email: ${JSON.stringify(row)}`);
       failed++;
       continue;
     }
-    const password = genPassword();
+    // Use pre-generated password from CSV if present, otherwise generate one.
+    const password = (row['Password'] || row['password'] || '').trim() || genPassword();
 
     // 1. Create the auth user.
     const { data: userData, error: userErr } = await admin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
-      user_metadata: { name: row.name || '' },
+      user_metadata: { name },
     });
     if (userErr) {
       console.error(`✗ ${email}: ${userErr.message}`);
@@ -116,7 +118,7 @@ async function main() {
     // 2. Upsert the profile row.
     const profile = {
       id: userId,
-      name: row.name || null,
+      name: name || null,
       email,
       frankfurt_id: row.frankfurt_id || null,
       hotel_id: row.hotel_id || null,
@@ -133,7 +135,7 @@ async function main() {
       continue;
     }
 
-    creds.push([email, password, row.name || '']);
+    creds.push([email, password, name]);
     created++;
     console.log(`✓ ${email}`);
   }

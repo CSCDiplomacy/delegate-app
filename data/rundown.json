@@ -7,7 +7,7 @@
       "title": "Arrival & Programme",
       "items": [
         { "time": "15:00", "title": "Meeting at Lobby", "venue": "Hotel Lobby", "type": "social", "gather_time": null, "notify": true },
-        { "time": "15:30", "title": "Frankfurt Stock Exchange", "venue": "Frankfurt Stock Exchange", "type": "visit", "gather_time": "15:15", "notify": true },
+        { "time": "15:30", "title": "Deutsche Börse Visitors Center", "venue": "Deutsche Börse Group", "type": "visit", "gather_time": "15:15", "notify": true },
         { "time": "17:00", "title": "Dinner at Harput Restaurant", "venue": "Harput Restaurant", "type": "meal", "gather_time": null, "notify": true }
       ]
     },
