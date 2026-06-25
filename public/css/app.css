@@ -337,6 +337,10 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; -webkit-t
 .next-card { display: flex; align-items: center; gap: 12px; padding: 13px 14px 13px 18px; border-radius: 14px; background: var(--surface); border: 1px solid var(--hairline); box-shadow: var(--shadow); margin-bottom: 10px; position: relative; overflow: hidden; transition: transform .12s ease, box-shadow .12s ease; }
 .next-card:last-child { margin-bottom: 0; }
 .next-card:active { transform: scale(0.98); box-shadow: none; }
+.next-card.is-breathing { animation: breathe 4.5s ease-in-out infinite; }
+.next-card.is-breathing:active { animation: none; }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+@media (prefers-reduced-motion: reduce) { .next-card.is-breathing { animation: none; } }
 .next-card-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 14px 0 0 14px; }
 .next-card-left { display: flex; flex-direction: column; align-items: center; width: 46px; flex-shrink: 0; }
 .next-card-time { font-size: 15px; font-weight: 900; line-height: 1.1; text-align: center; letter-spacing: -0.5px; }
@@ -386,6 +390,8 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; -webkit-t
 .live-pill .dot { width: 5px; height: 5px; border-radius: 50%; background: #fff; animation: flicker 1.5s infinite; }
 .t-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; line-height: 1.35; }
 .t-venue { font-size: 12.5px; color: var(--muted-strong); }
+.t-end { color: var(--muted); font-weight: 700; }
+.t-desc { font-size: 12.5px; color: var(--muted-strong); margin-top: 6px; line-height: 1.5; }
 .t-gather { font-size: 12px; color: var(--signal-deep); margin-top: 6px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
 [data-theme="dark"] .t-gather { color: var(--signal); }
 .t-gather::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--signal); flex-shrink: 0; }

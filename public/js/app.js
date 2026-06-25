@@ -298,7 +298,7 @@
         const cardStyle = isPrimary ? `background:#001224;border-color:#001224;color:#F9F9F9` : '';
         const timeStyle = isPrimary ? 'color:#D1C5A9' : '';
         const venueStyle = isPrimary ? 'color:rgba(229,219,194,0.75)' : '';
-        return `<div class="next-card" data-goto="rundown" style="${cardStyle}">
+        return `<div class="next-card${isPrimary ? ' is-breathing' : ''}" data-goto="rundown" style="${cardStyle}">
           ${!isPrimary ? `<div class="next-card-bar" style="background:${accent}"></div>` : ''}
           <div class="next-card-left">
             <div class="next-card-time" style="${timeStyle}">${esc(s.hm)}<small>${esc(s.ap)}</small></div>
@@ -355,15 +355,17 @@
     if (!day.items || !day.items.length) { el('timeline').innerHTML = '<div class="empty" style="padding:40px 0;text-align:center">Programme coming soon.</div>'; return; }
     el('timeline').innerHTML = day.items.map((it, i) => {
       const id = `${day.date}T${it.time}`, s = split12(it.time), starred = favourites.has(id);
+      const endStr = it.end_time ? fmt12(it.end_time) : '';
       const typeCls = brassTypes.includes((it.type || '').toLowerCase()) ? 't-type' : 't-type subtle';
       const map = it.venue ? mapsLink(it.venue) : null;
       return `<div class="t-item ${i === nowIdx ? 'is-now' : ''}">
-        <div class="t-time">${esc(s.hm)}<small>${esc(s.ap)}</small></div>
+        <div class="t-time">${esc(s.hm)}<small>${esc(s.ap)}</small>${endStr ? `<small class="t-end">– ${esc(endStr)}</small>` : ''}</div>
         <div class="t-dot"></div>
         <div class="t-content">
           <span class="${typeCls}">${typeIcon(it.type)}${esc(it.type || 'item')}</span>${i === nowIdx ? '<span class="live-pill"><span class="dot"></span>Live</span>' : ''}
           <div style="display:flex;align-items:flex-start;gap:8px"><div class="t-title">${esc(it.title)}</div><button class="star-btn ${starred ? 'starred' : ''}" data-fav="${esc(id)}" title="${starred ? 'Remove from favourites' : 'Add to favourites'}"><span class="star-icon">${starred ? '★' : '☆'}</span><span class="star-label">${starred ? 'Saved' : 'Save'}</span></button></div>
           <div class="t-venue">${esc(it.venue || '')}</div>
+          ${it.description ? `<div class="t-desc">${esc(it.description)}</div>` : ''}
           ${it.gather_time ? `<div class="t-gather">Gather at ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
             <button class="chip cal-btn" data-day="${esc(day.date)}" data-title="${esc(it.title)}" data-time="${esc(it.time)}" data-venue="${esc(it.venue||'')}" data-dur="${it.duration_min||60}">${ic(P.calendar,12)}Add to calendar</button>
