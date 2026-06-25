@@ -504,6 +504,8 @@
       html += `<div class="card"><div class="next-venue">Hotel details coming soon.</div></div>`;
     }
     if (checkin) html += `<div class="section-label">${esc(checkin.title || 'Guided check-in')}</div>
+      ${checkin.intro ? `<div class="card" style="padding:14px 18px"><div class="checkin-intro">${checkin.intro.split('\n\n').map(p => `<p>${esc(p)}</p>`).join('')}</div></div>` : ''}
+      ${checkin.kiosk_image ? `<img src="${esc(checkin.kiosk_image)}" alt="Check-in kiosk" class="checkin-img" />` : ''}
       ${checkin.check_in_note ? `<div class="card" style="padding:10px 18px"><div class="next-venue" style="font-size:0.85rem">${esc(checkin.check_in_note)}</div></div>` : ''}
       <div class="card" style="padding:6px 18px">
       ${(checkin.steps || []).map((s) => `<div class="guide-step"><div class="guide-num">${esc(s.step)}</div><div class="guide-text"><b>${esc(s.title)}.</b> ${esc(s.detail)}</div></div>`).join('')}</div>

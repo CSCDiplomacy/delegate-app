@@ -1,10 +1,11 @@
 {
   "title": "Hotel Check-in",
-  "intro": "Follow these steps on arrival at the hotel.",
+  "intro": "You go to check in machine or walk to reception.\n\nGive passport and have your room key.\n\nAll bookings are under Diplomark LTD",
+  "kiosk_image": "/img/checkin-kiosk.jpg",
   "steps": [
-    { "step": 1, "title": "Go to self check-in machine or reception", "detail": "You may use the self check-in kiosk in the lobby, or walk directly to the reception desk." },
+    { "step": 1, "title": "Go to self check-in machine or reception", "detail": "Use the self check-in kiosk in the lobby, or walk directly to the reception desk." },
     { "step": 2, "title": "Present your passport", "detail": "Hand over your passport to complete the check-in." },
-    { "step": 3, "title": "Receive your room key", "detail": "All bookings are under Diplomark Limited. Staff will locate your reservation and hand you your room key." }
+    { "step": 3, "title": "Receive your room key", "detail": "All bookings are under Diplomark LTD. Staff will locate your reservation and hand you your room key." }
   ],
   "bring": [
     "Passport",
@@ -13,5 +14,5 @@
   "check_in_from": "3:00 PM",
   "check_in_note": "You may arrive earlier and check availability — rooms are often ready before 3 PM.",
   "check_out": "June 28",
-  "booking_name": "Diplomark Limited"
+  "booking_name": "Diplomark LTD"
 }

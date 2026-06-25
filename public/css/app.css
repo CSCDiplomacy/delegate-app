@@ -427,6 +427,9 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; -webkit-t
 .hk-action { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 12.5px; font-weight: 800; padding: 13px 0; border-radius: 12px; background: var(--surface); border: 1.5px solid var(--hairline-strong); color: var(--ink); }
 .hk-action.primary { background: var(--signal); color: #fff; border-color: var(--signal); box-shadow: 0 8px 18px rgba(0,18,36,0.22); }
 .hk-action svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.checkin-intro p { font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 8px; }
+.checkin-intro p:last-child { margin-bottom: 0; }
+.checkin-img { width: 100%; border-radius: var(--radius); margin-bottom: 14px; display: block; object-fit: cover; max-height: 260px; }
 .guide-step { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--hairline); align-items: flex-start; }
 .guide-step:last-child { border-bottom: none; }
 .guide-num { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: #001224; width: 26px; height: 26px; border-radius: 50%; background: var(--brass); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
