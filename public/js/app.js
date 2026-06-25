@@ -306,7 +306,7 @@
           </div>
           <div class="next-card-body">
             <div class="next-card-title">${esc(it.title)}</div>
-            <div class="next-card-venue" style="${venueStyle}">${esc(it.venue || '')}${it.gather_time ? ` · gather ${esc(fmt12(it.gather_time))}` : ''}</div>
+            <div class="next-card-venue" style="${venueStyle}">${esc(it.venue || '')}${it.gather_time ? ` · Gather at ${esc(fmt12(it.gather_time))}` : ''}</div>
           </div>
           <div class="next-card-type" style="color:${isPrimary ? '#D1C5A9' : accent}">${typeIcon(it.type)}</div>
         </div>`;
@@ -322,7 +322,7 @@
     }
     el('dash-contact').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.phone,13)}Contact &amp; support</span><span class="link">Open →</span></div><div class="next-venue">Coordination team, venue map, feedback.</div>`;
     const sc = favourites.size;
-    if (el('dash-schedule')) el('dash-schedule').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.award,13)}My programme</span><span class="link">View →</span></div><div class="next-venue">${sc > 0 ? `★ ${sc} session${sc !== 1 ? 's' : ''} starred` : 'No sessions starred yet — tap ☆ in the Rundown.'}</div>`;
+    if (el('dash-schedule')) el('dash-schedule').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.award,13)}My programme</span><span class="link">View →</span></div><div class="next-venue">${sc > 0 ? `★ ${sc} session${sc !== 1 ? 's' : ''} starred` : 'No sessions starred yet. Tap ☆ in the Rundown to add sessions.'}</div>`;
     // latest announcement — reuse already-fetched notifications if available
     el('dash-update').innerHTML = `<div class="ann-title">Latest update</div><div class="ann-body" id="dash-ann">—</div>`;
     const _renderAnn = () => {
@@ -347,7 +347,7 @@
       el('timeline').innerHTML = '<div class="empty">Agenda coming soon.</div>'; el('day-tabs').innerHTML = ''; return;
     }
     const tz = rundown.timezone || 'Europe/Berlin'; const { date, minutes } = tzNow(tz);
-    if (!renderRundown._init) { const i = rundown.days.findIndex((d) => d.date === date); activeDay = i >= 0 ? i : 0; renderRundown._init = true; }
+    if (!renderRundown._userPicked) { const i = rundown.days.findIndex((d) => d.date === date); activeDay = i >= 0 ? i : 0; }
     el('day-tabs').innerHTML = rundown.days.map((d, i) => `<button class="day-tab ${i === activeDay ? 'active' : ''}" data-day="${i}">${esc(d.label)}</button>`).join('');
     const day = rundown.days[activeDay]; const isToday = day.date === date;
     let nowIdx = -1;
@@ -364,7 +364,7 @@
           <span class="${typeCls}">${typeIcon(it.type)}${esc(it.type || 'item')}</span>${i === nowIdx ? '<span class="live-pill"><span class="dot"></span>Live</span>' : ''}
           <div style="display:flex;align-items:flex-start;gap:8px"><div class="t-title">${esc(it.title)}</div><button class="star-btn ${starred ? 'starred' : ''}" data-fav="${esc(id)}" title="${starred ? 'Remove from favourites' : 'Add to favourites'}"><span class="star-icon">${starred ? '★' : '☆'}</span><span class="star-label">${starred ? 'Saved' : 'Save'}</span></button></div>
           <div class="t-venue">${esc(it.venue || '')}</div>
-          ${it.gather_time ? `<div class="t-gather">Gather ${esc(fmt12(it.gather_time))}</div>` : ''}
+          ${it.gather_time ? `<div class="t-gather">Gather at ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
             ${map ? `<a class="chip" href="${map}" target="_blank" rel="noopener">${ic(P.mapPin,12)}Open in Maps</a>` : ''}
             <button class="chip cal-btn" data-day="${esc(day.date)}" data-title="${esc(it.title)}" data-time="${esc(it.time)}" data-venue="${esc(it.venue||'')}" data-dur="${it.duration_min||60}">${ic(P.calendar,12)}Add to calendar</button>
@@ -459,7 +459,7 @@
         ${map ? `<div class="t-actions" style="margin-top:12px"><a class="chip primary" href="${map}" target="_blank" rel="noopener">${ic(P.mapPin,12)}Open in Maps</a></div>` : ''}</div>`; }).join('');
     } catch (e) { root.innerHTML = '<div class="empty">Could not load visits.</div>'; }
   }
-  function phVisits() { return `<div class="placeholder"><div class="ph-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><p>Visit cards appear here once <b>visits.json</b> is final.</p></div>`; }
+  function phVisits() { return `<div class="placeholder"><div class="ph-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><p>Visit details will appear here once the programme is finalised.</p></div>`; }
 
   /* ===================== SPEAKERS ===================== */
   async function renderSpeakers() {
@@ -467,7 +467,7 @@
     if (rendered.speakers) { root.innerHTML = listSpeakers(); return; }
     root.innerHTML = [1,2,3].map(() => skeletonCard([{w:'w70',h:'h16'},{w:'w100',h:'h12'}])).join('');
     try { const d = await getJson('/api/speakers'); speakers = d.speakers || []; rendered.speakers = true;
-      root.innerHTML = speakers.length ? listSpeakers() : `<div class="placeholder"><div class="ph-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg></div><p>Speaker bios appear here once the <b>speaker list</b> is shared.</p></div>`;
+      root.innerHTML = speakers.length ? listSpeakers() : `<div class="placeholder"><div class="ph-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg></div><p>Speaker bios will appear here once the speaker list is confirmed.</p></div>`;
     } catch (e) { root.innerHTML = '<div class="empty">Could not load speakers.</div>'; }
   }
   function listSpeakers() {
@@ -570,7 +570,7 @@
     root.innerHTML = html;
   }
   function schedEmpty() {
-    return `<div class="sched-empty"><span class="sched-empty-icon">☆</span><p>Your personal schedule is empty.</p><small>Tap ☆ next to any session in the <b>Rundown</b> to add it here.</small></div>`;
+    return `<div class="sched-empty"><span class="sched-empty-icon">☆</span><p>Your personal schedule is empty.</p><small>Tap ☆ next to any session in the Rundown to add it here.</small></div>`;
   }
 
   /* ===================== NOTIFICATIONS ===================== */
@@ -579,7 +579,7 @@
   function computeReminders() {
     if (!rundown || !rundown.days) return [];
     const tz = rundown.timezone || 'Europe/Berlin'; const { date, minutes } = tzNow(tz); const out = [];
-    for (const day of rundown.days) { if (day.date !== date) continue; for (const it of day.items || []) { if (!it.notify) continue; const d = toMin(it.time) - minutes; if (d > 0 && d <= 60) out.push({ id: `rem-${day.date}T${it.time}`, title: `Starting soon: ${it.title}`, body: `${fmt12(it.time)} at ${it.venue || 'the venue'}${it.gather_time ? ` — gather ${fmt12(it.gather_time)}` : ''}.`, created_at: new Date().toISOString(), kind: 'reminder' }); } }
+    for (const day of rundown.days) { if (day.date !== date) continue; for (const it of day.items || []) { if (!it.notify) continue; const d = toMin(it.time) - minutes; if (d > 0 && d <= 60) out.push({ id: `rem-${day.date}T${it.time}`, title: `Starting soon: ${it.title}`, body: `${fmt12(it.time)} at ${it.venue || 'the venue'}${it.gather_time ? `. Gather at ${fmt12(it.gather_time)}` : ''}.`, created_at: new Date().toISOString(), kind: 'reminder' }); } }
     return out;
   }
   let lastIds = new Set();
@@ -662,7 +662,7 @@
     document.addEventListener('click', (e) => {
       const cal = e.target.closest('.cal-btn'); if (cal) { e.preventDefault(); addToCalendar(cal); return; }
       const go = e.target.closest('[data-goto]'); if (go) { switchScreen(go.dataset.goto); closeDrawers(); return; }
-      const day = e.target.closest('.day-tab[data-day]'); if (day) { activeDay = +day.dataset.day; renderRundown(); return; }
+      const day = e.target.closest('.day-tab[data-day]'); if (day) { renderRundown._userPicked = true; activeDay = +day.dataset.day; renderRundown(); return; }
       const fav = e.target.closest('[data-fav]'); if (fav) { e.preventDefault(); toggleFav(fav.dataset.fav, fav); return; }
       const spk = e.target.closest('[data-spk]'); if (spk) { showSpeaker(+spk.dataset.spk); return; }
     });
