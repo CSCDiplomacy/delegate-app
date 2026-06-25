@@ -2,7 +2,7 @@
   "org": "Centre for International Political Economy Studies (CIPES)",
   "venue": null,
   "contacts": [
-    { "label": "CIPES coordination", "value": "programs@thecipes.org", "type": "email" }
+    { "label": "CIPES coordination", "value": "programs@thecipe.org", "type": "email" }
   ],
   "socials": [
     { "label": "Website", "value": "https://thecipes.org", "type": "url" },
