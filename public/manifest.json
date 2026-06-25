@@ -1,7 +1,7 @@
 {
   "name": "YEF Frankfurt 2026",
   "short_name": "YEF FRA",
-  "description": "CIPES YEF Frankfurt 2026 — rundown, visits, speakers, hotel & updates in one place.",
+  "description": "CIPES YEF Frankfurt 2026 - rundown, visits, speakers, hotel & updates in one place.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

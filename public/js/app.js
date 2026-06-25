@@ -1,4 +1,4 @@
-/* CIPES Delegate App — front-end controller (Credential / boarding-pass theme).
+/* CIPES Delegate App - front-end controller (Credential / boarding-pass theme).
    No framework, no build step. Supabase Auth in the browser (anon key) + the
    app's own JSON/Supabase API. Responsive: mobile drawers / desktop 3-col. */
 (function () {
@@ -203,17 +203,17 @@
     const tz = (rundown && rundown.timezone) || 'Europe/Berlin';
     const today = tzNow(tz);
     const dayIdx = rundown && rundown.days ? rundown.days.findIndex((d) => d.date === today.date) : -1;
-    const dayLabel = dayIdx >= 0 ? rundown.days[dayIdx].label : '—';
-    const hotelName = hotelData && hotelData.hotel ? hotelData.hotel.name : '—';
-    const checkIn = hotelData && hotelData.hotel ? (hotelData.hotel.check_in || '—') : '—';
-    const checkOut = hotelData && hotelData.hotel ? (hotelData.hotel.check_out || '—') : '—';
+    const dayLabel = dayIdx >= 0 ? rundown.days[dayIdx].label : '-';
+    const hotelName = hotelData && hotelData.hotel ? hotelData.hotel.name : '-';
+    const checkIn = hotelData && hotelData.hotel ? (hotelData.hotel.check_in || '-') : '-';
+    const checkOut = hotelData && hotelData.hotel ? (hotelData.hotel.check_out || '-') : '-';
     const tzDisplay = (tz || '').replace('Europe/', '').replace('Asia/', '');
     const sets = {
       dashboard: ['Delegate credential', nm, 'CIPES · YEF Frankfurt 2026', [['Hotel', hotelName], ['Check-in', checkIn], ['Programme', dayIdx >= 0 ? dayLabel : 'Event soon', true]]],
-      rundown: ['Programme', `${dayLabel} Rundown`, '"The week, hour by hour."', [['Days', rundown && rundown.days ? String(rundown.days.length) : '—'], ['Timezone', tzDisplay], ['You are', nm.split(' ')[0], true]]],
+      rundown: ['Programme', `${dayLabel} Rundown`, '"The week, hour by hour."', [['Days', rundown && rundown.days ? String(rundown.days.length) : '-'], ['Timezone', tzDisplay], ['You are', nm.split(' ')[0], true]]],
       visits: ['Institutional visits', 'Visits & Programs', '"Where the delegation calls on the city."', [['Scope', 'All delegates'], ['Maps', 'Tap to open'], ['Status', 'See list', true]]],
       speakers: ['CIPES Speakers', 'Speakers', '"The people behind the sessions."', [['Sessions', 'Linked to rundown'], ['Tap', 'For bios'], ['You are', nm.split(' ')[0], true]]],
-      hotel: ['Your stay', hotelName, '"Your base for the week."', [['Check-in', checkIn], ['Check-out', checkOut], ['Booking', hotelData && hotelData.hotel ? (hotelData.hotel.booking_name || '—') : '—', true]]],
+      hotel: ['Your stay', hotelName, '"Your base for the week."', [['Check-in', checkIn], ['Check-out', checkOut], ['Booking', hotelData && hotelData.hotel ? (hotelData.hotel.booking_name || '-') : '-', true]]],
       contact: ['Coordination', 'Contact us', '"We are here to help."', [['Reach', 'Email or call'], ['Feedback', 'Welcome'], ['CIPES', 'YEF Frankfurt 2026', true]]],
       schedule: ['My Programme', 'My Schedule', '"Sessions you starred."', [['Starred', favourites.size ? `${favourites.size} session${favourites.size !== 1 ? 's' : ''}` : 'None yet'], ['Source', 'Rundown ☆'], ['Type', 'Personal only', true]]],
     };
@@ -322,8 +322,8 @@
     el('dash-contact').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.phone,13)}Contact &amp; support</span><span class="link">Open →</span></div><div class="next-venue">Coordination team, venue map, feedback.</div>`;
     const sc = favourites.size;
     if (el('dash-schedule')) el('dash-schedule').innerHTML = `<div class="card-eyebrow"><span style="display:flex;align-items:center;gap:5px">${ic(P.award,13)}My programme</span><span class="link">View →</span></div><div class="next-venue">${sc > 0 ? `★ ${sc} session${sc !== 1 ? 's' : ''} starred` : 'No sessions starred yet. Tap ☆ in the Rundown to add sessions.'}</div>`;
-    // latest announcement — reuse already-fetched notifications if available
-    el('dash-update').innerHTML = `<div class="ann-title">Latest update</div><div class="ann-body" id="dash-ann">—</div>`;
+    // latest announcement - reuse already-fetched notifications if available
+    el('dash-update').innerHTML = `<div class="ann-title">Latest update</div><div class="ann-body" id="dash-ann">-</div>`;
     const _renderAnn = () => {
       const t = el('dash-ann'); if (!t) return;
       const anns = (window._notif || []).filter((n) => n.kind === 'announcement');

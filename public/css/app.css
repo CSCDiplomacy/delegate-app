@@ -1,7 +1,7 @@
-/* CIPES Delegate App — "Credential / boarding-pass" theme.
+/* CIPES Delegate App - "Credential / boarding-pass" theme.
    Navy + parchment-beige palette from the YEF Frankfurt brand. Light & dark modes.
    Mobile: stacked screens, bottom nav, slide-in drawers.
-   Desktop (>=960px): real 3-column website — sidebar · main · right rail. */
+   Desktop (>=960px): real 3-column website - sidebar · main · right rail. */
 
 :root {
   --paper: #F9F9F9;
@@ -402,12 +402,12 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; -webkit-t
 .cal-picker { position: absolute; bottom: calc(100% + 6px); left: 0; background: var(--surface); border: 1.5px solid var(--hairline-strong); border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,.14); z-index: 200; min-width: 180px; overflow: hidden; display: flex; flex-direction: column; }
 .cal-picker a { padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--ink); text-decoration: none; white-space: nowrap; }
 .cal-picker a:hover { background: var(--hairline); }
-/* feedback textarea inside the app (not login) — override the dark-card defaults */
+/* feedback textarea inside the app (not login) - override the dark-card defaults */
 .screen .field textarea { color: var(--ink); background: var(--surface); border: 1.5px solid var(--hairline-strong); border-radius: var(--radius-sm); padding: 12px 13px; font-size: 15px; font-family: var(--font-body); width: 100%; }
 .screen .field textarea::placeholder { color: var(--muted); }
 .screen .field textarea:focus { outline: none; border-color: var(--signal); }
 
-/* star button — larger + label */
+/* star button - larger + label */
 .star-btn { background: none; border: none; padding: 8px 6px; margin-left: auto; color: var(--brass-deep); min-width: 44px; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; flex-shrink: 0; }
 .star-btn .star-icon { font-size: 22px; line-height: 1; transition: transform .15s ease; }
 .star-btn.starred .star-icon { color: var(--signal); }

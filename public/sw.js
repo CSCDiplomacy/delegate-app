@@ -1,8 +1,8 @@
-/* CIPES Delegate App — service worker.
+/* CIPES Delegate App - service worker.
    Strategy:
    - App shell (HTML/CSS/JS/images): cache-first → instant load on repeat visits,
      background-revalidate so updates still roll out silently.
-   - Static event JSON (/api/rundown etc.): stale-while-revalidate — show cached
+   - Static event JSON (/api/rundown etc.): stale-while-revalidate - show cached
      immediately, refresh in background.
    - Auth / per-user / dynamic: network-only, never cached. */
 
@@ -46,7 +46,7 @@ self.addEventListener('fetch', (e) => {
   // Cross-origin (Supabase, Google Fonts): let browser handle it.
   if (url.origin !== location.origin) return;
 
-  // Network-only endpoints — never touch cache.
+  // Network-only endpoints - never touch cache.
   if (NETWORK_ONLY.some((p) => url.pathname.startsWith(p))) return;
 
   // Static event JSON: stale-while-revalidate.
