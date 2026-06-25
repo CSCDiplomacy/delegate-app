@@ -1,0 +1,19 @@
+# Defense-in-depth: if this app-root folder is ever the web document root
+# (instead of ./public), block the web server from serving sensitive files
+# directly — before Passenger/Node ever sees the request.
+
+# Block the entire .git directory
+RedirectMatch 404 /\.git
+
+# Block dotfiles (.env, .env.local, etc.) — except .well-known
+<FilesMatch "^\.(?!well-known)">
+  Require all denied
+</FilesMatch>
+
+# Block credential / data exports and env files by extension/name
+<FilesMatch "(\.csv|\.env.*)$">
+  Require all denied
+</FilesMatch>
+
+# Block server-side source dirs that should never be downloadable
+RedirectMatch 404 ^/(scripts|routes|lib|data)/

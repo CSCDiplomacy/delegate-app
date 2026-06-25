@@ -22,3 +22,6 @@ cscd_delegate_app.html
 # Source logo files (processed versions live in public/img/)
 CIPES Logo.png
 CSCD-logo-0155.png
+
+# Delegate list with plaintext passwords — never commit
+delegates.csv
