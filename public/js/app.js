@@ -207,10 +207,9 @@
     const hotelName = hotelData && hotelData.hotel ? hotelData.hotel.name : '—';
     const checkIn = hotelData && hotelData.hotel ? (hotelData.hotel.check_in || '—') : '—';
     const checkOut = hotelData && hotelData.hotel ? (hotelData.hotel.check_out || '—') : '—';
-    const fid = profile.frankfurt_id || '—';
     const tzDisplay = (tz || '').replace('Europe/', '').replace('Asia/', '');
     const sets = {
-      dashboard: ['Delegate credential', nm, '', [['Delegate ID', fid], ['Hotel', hotelName], ['Status', dayIdx >= 0 ? `${dayLabel} · Live` : 'Event soon', true]]],
+      dashboard: ['Delegate credential', nm, 'CIPES · YEF Frankfurt 2026', [['Hotel', hotelName], ['Check-in', checkIn], ['Programme', dayIdx >= 0 ? dayLabel : 'Event soon', true]]],
       rundown: ['Programme', `${dayLabel} Rundown`, '"The week, hour by hour."', [['Days', rundown && rundown.days ? String(rundown.days.length) : '—'], ['Timezone', tzDisplay], ['You are', nm.split(' ')[0], true]]],
       visits: ['Institutional visits', 'Visits & Programs', '"Where the delegation calls on the city."', [['Scope', 'All delegates'], ['Maps', 'Tap to open'], ['Status', 'See list', true]]],
       speakers: ['CIPES Speakers', 'Speakers', '"The people behind the sessions."', [['Sessions', 'Linked to rundown'], ['Tap', 'For bios'], ['You are', nm.split(' ')[0], true]]],
@@ -365,7 +364,7 @@
           <span class="${typeCls}">${typeIcon(it.type)}${esc(it.type || 'item')}</span>${i === nowIdx ? '<span class="live-pill"><span class="dot"></span>Live</span>' : ''}
           <div style="display:flex;align-items:flex-start;gap:8px"><div class="t-title">${esc(it.title)}</div><button class="star-btn ${starred ? 'starred' : ''}" data-fav="${esc(id)}" title="${starred ? 'Remove from favourites' : 'Add to favourites'}"><span class="star-icon">${starred ? '★' : '☆'}</span><span class="star-label">${starred ? 'Saved' : 'Save'}</span></button></div>
           <div class="t-venue">${esc(it.venue || '')}</div>
-          ${it.description ? `<div class="t-desc">${esc(it.description)}</div>` : ''}
+          ${it.description ? `<div class="t-desc-wrap"><div class="t-desc clamped">${esc(it.description)}</div><button class="t-more" type="button">More</button></div>` : ''}
           ${it.gather_time ? `<div class="t-gather">Gather at ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
             <button class="chip cal-btn" data-day="${esc(day.date)}" data-title="${esc(it.title)}" data-time="${esc(it.time)}" data-venue="${esc(it.venue||'')}" data-dur="${it.duration_min||60}">${ic(P.calendar,12)}Add to calendar</button>
@@ -661,6 +660,7 @@
     addSwipeClose(el('menu-drawer'), 'left');  // menu drawer: swipe left to close
 
     document.addEventListener('click', (e) => {
+      const more = e.target.closest('.t-more'); if (more) { e.preventDefault(); const d = more.previousElementSibling; const open = d.classList.toggle('clamped'); more.textContent = open ? 'More' : 'Less'; return; }
       const cal = e.target.closest('.cal-btn'); if (cal) { e.preventDefault(); addToCalendar(cal); return; }
       const go = e.target.closest('[data-goto]'); if (go) { switchScreen(go.dataset.goto); closeDrawers(); return; }
       const day = e.target.closest('.day-tab[data-day]'); if (day) { renderRundown._userPicked = true; activeDay = +day.dataset.day; renderRundown(); return; }
