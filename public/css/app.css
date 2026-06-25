@@ -25,9 +25,9 @@
   --radius-lg: 22px;
   --radius: 16px;
   --radius-sm: 10px;
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 }
 [data-theme="dark"] {
   --paper: #080D12;
