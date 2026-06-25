@@ -1,10 +1,11 @@
 {
-  "org": "Centre for Strategic & Contemporary Diplomacy (CIPES)",
+  "org": "Centre for International Political Economy Studies (CIPES)",
   "venue": null,
   "contacts": [
     { "label": "CIPES coordination", "value": "cscdiplomacy@gmail.com", "type": "email" }
   ],
   "socials": [
-    { "label": "Website", "value": "https://thecipes.org", "type": "url" }
+    { "label": "Website", "value": "https://thecipes.org", "type": "url" },
+    { "label": "YEF Frankfurt 2026", "value": "https://thecipes.org/yef-frankfurt-2026/", "type": "url" }
   ]
 }
