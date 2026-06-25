@@ -366,7 +366,6 @@
           <div class="t-venue">${esc(it.venue || '')}</div>
           ${it.gather_time ? `<div class="t-gather">Gather at ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
-            ${map ? `<a class="chip" href="${map}" target="_blank" rel="noopener">${ic(P.mapPin,12)}Open in Maps</a>` : ''}
             <button class="chip cal-btn" data-day="${esc(day.date)}" data-title="${esc(it.title)}" data-time="${esc(it.time)}" data-venue="${esc(it.venue||'')}" data-dur="${it.duration_min||60}">${ic(P.calendar,12)}Add to calendar</button>
           </div>
         </div>
