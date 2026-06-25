@@ -1,17 +1,17 @@
 {
-  "_note": "PLACEHOLDER guided check-in template (shared by all delegates). Replace wording with the client's real reception/passport/program-name steps when provided.",
-  "title": "Guided check-in",
-  "intro": "Follow these steps when you arrive at the hotel. This is placeholder wording and will be finalised before the event.",
+  "title": "Hotel Check-in",
+  "intro": "Follow these steps on arrival at the hotel.",
   "steps": [
-    { "step": 1, "title": "Go to reception", "detail": "Head to the hotel reception/front desk on arrival." },
-    { "step": 2, "title": "Present your passport / ID", "detail": "Have your passport or a government-issued photo ID ready." },
-    { "step": 3, "title": "Staff find you on the list", "detail": "The desk has the delegate rooming list; they will locate your booking." },
-    { "step": 4, "title": "State your program name", "detail": "Mention you are attending the CIPES program so staff apply the correct rate and inclusions." },
-    { "step": 5, "title": "Receive your room allocation", "detail": "Collect your key card and note your room number, breakfast times, and WiFi." }
+    { "step": 1, "title": "Go to self check-in machine or reception", "detail": "You may use the self check-in kiosk in the lobby, or walk directly to the reception desk." },
+    { "step": 2, "title": "Present your passport", "detail": "Hand over your passport to complete the check-in." },
+    { "step": 3, "title": "Receive your room key", "detail": "All bookings are under Diplomark Limited. Staff will locate your reservation and hand you your room key." }
   ],
   "bring": [
-    "Passport / government-issued ID",
-    "Your delegate / Frankfurt ID",
-    "Booking reference (shown on your Hotel tab)"
-  ]
+    "Passport",
+    "This app (for your booking reference)"
+  ],
+  "check_in_from": "3:00 PM",
+  "check_in_note": "You may arrive earlier and check availability — rooms are often ready before 3 PM.",
+  "check_out": "June 28",
+  "booking_name": "Diplomark Limited"
 }

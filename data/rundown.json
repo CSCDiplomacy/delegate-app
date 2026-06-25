@@ -1,43 +1,34 @@
 {
-  "_note": "DUMMY data for use-case testing. Same structure as production: replace `days[].items[]` with the client's final agenda. Times are 24h local to `timezone`. `type` drives the badge colour (keynote|workshop|panel|social|meal|visit). Set `notify:true` on items that should trigger 1-hour-before reminders. Dates are set around the current date so the live Now/Next highlight and reminder pop-ups are demonstrable.",
-  "timezone": "Asia/Jakarta",
+  "timezone": "Europe/Berlin",
   "days": [
     {
       "label": "Day 1",
-      "date": "2026-06-24",
-      "title": "Arrival & Opening",
+      "date": "2026-06-25",
+      "title": "Arrival & Programme",
       "items": [
-        { "time": "13:00", "title": "Delegate registration & welcome desk", "venue": "Hotel Lobby, Pullman Jakarta", "type": "social", "gather_time": null, "notify": false },
-        { "time": "15:00", "title": "Orientation & programme briefing", "venue": "Borobudur Ballroom", "type": "panel", "gather_time": "14:45", "notify": true },
-        { "time": "16:30", "title": "Ice-breaker: Delegate networking", "venue": "Borobudur Ballroom", "type": "social", "gather_time": null, "notify": false },
-        { "time": "19:00", "title": "Welcome gala dinner", "venue": "Grand Ballroom (formal attire)", "type": "meal", "gather_time": "18:45", "notify": true }
+        { "time": "15:00", "title": "Meeting at Lobby", "venue": "Hotel Lobby", "type": "social", "gather_time": null, "notify": true },
+        { "time": "15:30", "title": "Frankfurt Stock Exchange", "venue": "Frankfurt Stock Exchange", "type": "visit", "gather_time": "15:15", "notify": true },
+        { "time": "17:00", "title": "Dinner at Harput Restaurant", "venue": "Harput Restaurant", "type": "meal", "gather_time": null, "notify": true }
       ]
     },
     {
       "label": "Day 2",
-      "date": "2026-06-25",
-      "title": "Sessions & Institutional Visit",
-      "items": [
-        { "time": "07:30", "title": "Breakfast", "venue": "Sailendra Restaurant", "type": "meal", "gather_time": null, "notify": false },
-        { "time": "09:00", "title": "Opening ceremony", "venue": "Main Hall", "type": "keynote", "gather_time": "08:45", "notify": true },
-        { "time": "10:00", "title": "Keynote: Diplomacy in a multipolar Asia", "venue": "Main Hall", "type": "keynote", "gather_time": null, "notify": true },
-        { "time": "11:15", "title": "Panel: Youth in track-two diplomacy", "venue": "Main Hall", "type": "panel", "gather_time": null, "notify": true },
-        { "time": "13:00", "title": "Networking lunch", "venue": "Sailendra Restaurant", "type": "meal", "gather_time": null, "notify": false },
-        { "time": "14:30", "title": "Institutional visit: ASEAN Secretariat", "venue": "Coach departs Hotel Lobby", "type": "visit", "gather_time": "14:15", "notify": true },
-        { "time": "19:30", "title": "Cultural evening & dinner", "venue": "Garden Terrace", "type": "social", "gather_time": "19:15", "notify": true }
-      ]
+      "date": "2026-06-26",
+      "title": "Programme TBD",
+      "items": []
     },
     {
       "label": "Day 3",
-      "date": "2026-06-26",
-      "title": "Workshops & Closing",
+      "date": "2026-06-27",
+      "title": "Programme TBD",
+      "items": []
+    },
+    {
+      "label": "Day 4",
+      "date": "2026-06-28",
+      "title": "Departure",
       "items": [
-        { "time": "07:30", "title": "Breakfast", "venue": "Sailendra Restaurant", "type": "meal", "gather_time": null, "notify": false },
-        { "time": "09:00", "title": "Workshop A: Negotiation simulation", "venue": "Function Room 1", "type": "workshop", "gather_time": "08:50", "notify": true },
-        { "time": "09:00", "title": "Workshop B: Public speaking & advocacy", "venue": "Function Room 2", "type": "workshop", "gather_time": "08:50", "notify": true },
-        { "time": "11:00", "title": "Delegate resolutions session", "venue": "Main Hall", "type": "panel", "gather_time": null, "notify": true },
-        { "time": "12:30", "title": "Closing & certificate ceremony", "venue": "Main Hall", "type": "keynote", "gather_time": "12:15", "notify": true },
-        { "time": "13:30", "title": "Farewell lunch", "venue": "Grand Ballroom", "type": "meal", "gather_time": null, "notify": false }
+        { "time": "11:00", "title": "Hotel Check-out", "venue": "Hotel Reception", "type": "social", "gather_time": null, "notify": true }
       ]
     }
   ]

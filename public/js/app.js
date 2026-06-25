@@ -88,27 +88,42 @@
   function showLogin() { el('view-login').classList.remove('hidden'); el('view-app').classList.add('hidden'); }
   function swapForm(w) { ['login', 'reset', 'newpw'].forEach((k) => el(k + '-form').classList.toggle('hidden', k !== w)); }
 
+  const SPINNER = `<svg class="btn-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9" stroke-opacity=".25"/><path d="M12 3a9 9 0 0 1 9 9"/></svg>`;
+  function btnLoad(id, label) {
+    const b = el(id); b.disabled = true;
+    b.dataset.label = b.innerHTML;
+    b.innerHTML = `${SPINNER}${label || ''}`;
+  }
+  function btnReset(id) {
+    const b = el(id); b.disabled = false;
+    if (b.dataset.label) { b.innerHTML = b.dataset.label; delete b.dataset.label; }
+  }
+
   async function doLogin() {
     const m = el('login-msg'); m.textContent = ''; m.className = 'form-msg';
     const email = el('email').value.trim(), password = el('password').value;
     if (!email || !password) { m.textContent = 'Enter email and password.'; m.className = 'form-msg error'; return; }
-    el('btn-login').disabled = true;
+    btnLoad('btn-login', 'Signing in…');
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
-    el('btn-login').disabled = false;
+    btnReset('btn-login');
     if (error) { m.textContent = error.message; m.className = 'form-msg error'; return; }
     session = data.session; enterApp();
   }
   async function doSendReset() {
     const m = el('reset-msg'); const email = el('reset-email').value.trim();
     if (!email) { m.textContent = 'Enter your email.'; m.className = 'form-msg error'; return; }
+    btnLoad('btn-send-reset', 'Sending…');
     const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin });
+    btnReset('btn-send-reset');
     if (error) { m.textContent = error.message; m.className = 'form-msg error'; return; }
     m.textContent = 'If that email exists, a reset link is on its way.'; m.className = 'form-msg ok';
   }
   async function doSetPassword() {
     const m = el('newpw-msg'); const pw = el('new-password').value;
     if (pw.length < 8) { m.textContent = 'Use at least 8 characters.'; m.className = 'form-msg error'; return; }
+    btnLoad('btn-set-pw', 'Updating…');
     const { error } = await sb.auth.updateUser({ password: pw });
+    btnReset('btn-set-pw');
     if (error) { m.textContent = error.message; m.className = 'form-msg error'; return; }
     m.textContent = 'Password updated. Signing you in…'; m.className = 'form-msg ok';
     history.replaceState(null, '', location.pathname); setTimeout(enterApp, 800);
@@ -317,6 +332,7 @@
     const day = rundown.days[activeDay]; const isToday = day.date === date;
     let nowIdx = -1;
     if (isToday) for (let i = 0; i < day.items.length; i++) { const st = toMin(day.items[i].time), en = i + 1 < day.items.length ? toMin(day.items[i + 1].time) : st + 90; if (minutes >= st && minutes < en) { nowIdx = i; break; } }
+    if (!day.items || !day.items.length) { el('timeline').innerHTML = '<div class="empty" style="padding:40px 0;text-align:center">Programme coming soon.</div>'; return; }
     el('timeline').innerHTML = day.items.map((it, i) => {
       const id = `${day.date}T${it.time}`, s = split12(it.time), starred = favourites.has(id);
       const typeCls = brassTypes.includes((it.type || '').toLowerCase()) ? 't-type' : 't-type subtle';
@@ -451,13 +467,15 @@
       const h = hotelData.hotel, d = hotelData.delegate; const map = mapsLink(h.map || h.address);
       const tel = (h.contacts || []).find((c) => c.type === 'phone');
       html += `<div class="section-label">Your room</div><div class="hk-grid">
-        ${field('Hotel', h.name, P.building)}${field('Room', d.room, P.door)}${field('Check-in', d.check_in, P.logIn)}${field('Check-out', d.check_out, P.logOut)}${field('Booking ref', d.booking_ref, P.hash)}${field('Meals', d.meals, P.coffee)}</div>
+        ${field('Hotel', h.name, P.building)}${field('Room', d.room, P.door)}${field('Check-in', d.check_in || h.check_in, P.logIn)}${field('Check-out', d.check_out || h.check_out, P.logOut)}${field('Booking ref', d.booking_ref || h.booking_name, P.hash)}${field('Meals', d.meals, P.coffee)}</div>
         <div class="hk-actions">${map ? `<a class="hk-action primary" href="${map}" target="_blank" rel="noopener">${ic(P.mapPin,15)}Open in Maps</a>` : ''}${tel ? `<a class="hk-action" href="tel:${esc(tel.value)}">${ic(P.phone,15)}Call hotel</a>` : ''}</div>`;
       if (h.wifi) html += `<div class="section-label">WiFi</div><div class="card"><div class="meal-row"><span style="display:flex;align-items:center;gap:7px">${ic(P.wifi,15)}Network</span><span>${esc(h.wifi)}</span></div></div>`;
     } else {
       html += `<div class="card"><div class="next-venue">Your hotel details will appear here once assigned.</div></div>`;
     }
-    if (checkin) html += `<div class="section-label">${esc(checkin.title || 'Guided check-in')}</div><div class="card" style="padding:6px 18px">
+    if (checkin) html += `<div class="section-label">${esc(checkin.title || 'Guided check-in')}</div>
+      ${checkin.check_in_note ? `<div class="card" style="padding:10px 18px"><div class="next-venue" style="font-size:0.85rem">${esc(checkin.check_in_note)}</div></div>` : ''}
+      <div class="card" style="padding:6px 18px">
       ${(checkin.steps || []).map((s) => `<div class="guide-step"><div class="guide-num">${esc(s.step)}</div><div class="guide-text"><b>${esc(s.title)}.</b> ${esc(s.detail)}</div></div>`).join('')}</div>
       ${checkin.bring && checkin.bring.length ? `<div class="card"><div class="card-eyebrow">Bring with you</div>${checkin.bring.map((b) => `<div class="meal-row"><span>${esc(b)}</span><span>✓</span></div>`).join('')}</div>` : ''}`;
     root.innerHTML = html;
@@ -482,8 +500,10 @@
   async function sendFeedback() {
     const m = el('fb-msg'); const comment = el('fb-comment').value.trim();
     if (!comment) { m.textContent = 'Write something first.'; m.className = 'form-msg error'; return; }
+    btnLoad('btn-feedback', 'Sending…');
     try { await api('/feedback', { method: 'POST', body: JSON.stringify({ comment }) }); m.textContent = 'Thanks for the feedback!'; m.className = 'form-msg ok'; el('fb-comment').value = ''; }
     catch (e) { m.textContent = 'Could not send right now.'; m.className = 'form-msg error'; }
+    finally { btnReset('btn-feedback'); }
   }
 
   /* ===================== MY SCHEDULE ===================== */
