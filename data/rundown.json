@@ -33,7 +33,7 @@
       "label": "Day 3",
       "date": "2026-06-27",
       "title": "Delegate Presentations & Closing",
-      "about": "The closing day at Rivvers Frankfurt City Coworking Space features delegate presentation sessions, followed by closing remarks and wrap-up.",
+      "about": "The closing day at Rivvers Frankfurt City Coworking Space features delegate presentation sessions, followed by closing remarks and wrap-up. Venue location: https://maps.app.goo.gl/ZVFHqmmyrCLcmzjf8",
       "items": [
         { "time": "10:00", "end_time": "11:30", "duration_min": 90, "title": "Delegate Presentations", "venue": "Rivvers Frankfurt City – Coworking Space, Baseler Str. 48, 60329 Frankfurt am Main", "type": "workshop", "gather_time": null, "notify": true, "description": "Delegate presentation sessions." },
         { "time": "11:30", "end_time": "12:00", "duration_min": 30, "title": "Coffee Break", "venue": "Rivvers Frankfurt City – Coworking Space, Baseler Str. 48, 60329 Frankfurt am Main", "type": "social", "gather_time": null, "notify": false },

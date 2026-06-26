@@ -18,6 +18,8 @@
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
   function mapsLink(q) { if (!q) return null; if (/^https?:\/\//.test(q)) return q; return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`; }
+  // escape, then turn bare URLs into clickable links
+  function linkify(s) { return esc(s).replace(/(https?:\/\/[^\s<]+)/g, (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`); }
 
   /* ---- SVG icon paths (24×24 Feather-style) ---- */
   const P = {
@@ -360,7 +362,7 @@
     // optional per-day "About this day" intro + resource download
     el('day-about').innerHTML = (day.about || day.resource) ? `<div class="day-about">
         <div class="day-about-label">About ${esc(day.label)}</div>
-        ${day.about ? `<p class="day-about-text">${esc(day.about)}</p>` : ''}
+        ${day.about ? `<p class="day-about-text">${linkify(day.about)}</p>` : ''}
         ${day.resource ? `<a class="chip resource breathing" href="${esc(day.resource.file)}" target="_blank" rel="noopener" download>${ic(P.download,13)}${esc(day.resource.label || 'Download resources')}</a>` : ''}
       </div>` : '';
     if (!day.items || !day.items.length) { el('timeline').innerHTML = '<div class="empty" style="padding:40px 0;text-align:center">Programme coming soon.</div>'; return; }
@@ -376,7 +378,7 @@
           <span class="${typeCls}">${typeIcon(it.type)}${esc(it.type || 'item')}</span>${i === nowIdx ? '<span class="live-pill"><span class="dot"></span>Live</span>' : ''}
           <div style="display:flex;align-items:flex-start;gap:8px"><div class="t-title">${esc(it.title)}</div><button class="star-btn ${starred ? 'starred' : ''}" data-fav="${esc(id)}" title="${starred ? 'Remove from favourites' : 'Add to favourites'}"><span class="star-icon">${starred ? '★' : '☆'}</span><span class="star-label">${starred ? 'Saved' : 'Save'}</span></button></div>
           <div class="t-venue">${esc(it.venue || '')}</div>
-          ${it.description ? `<div class="t-desc-wrap"><div class="t-desc clamped">${esc(it.description)}</div><button class="t-more" type="button">More</button></div>` : ''}
+          ${it.description ? `<div class="t-desc-wrap"><div class="t-desc">${esc(it.description)}</div></div>` : ''}
           ${it.gather_time ? `<div class="t-gather">Gather at ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
             <button class="chip cal-btn" data-day="${esc(day.date)}" data-title="${esc(it.title)}" data-time="${esc(it.time)}" data-venue="${esc(it.venue||'')}" data-dur="${it.duration_min||60}">${ic(P.calendar,12)}Add to calendar</button>
@@ -673,7 +675,6 @@
     addSwipeClose(el('menu-drawer'), 'left');  // menu drawer: swipe left to close
 
     document.addEventListener('click', (e) => {
-      const more = e.target.closest('.t-more'); if (more) { e.preventDefault(); const d = more.previousElementSibling; const open = d.classList.toggle('clamped'); more.textContent = open ? 'More' : 'Less'; return; }
       const cal = e.target.closest('.cal-btn'); if (cal) { e.preventDefault(); addToCalendar(cal); return; }
       const dl = e.target.closest('.chip.resource'); if (dl) { track('pdf_download', dl.getAttribute('href')); /* let the native download proceed */ }
       const go = e.target.closest('[data-goto]'); if (go) { switchScreen(go.dataset.goto); closeDrawers(); return; }
