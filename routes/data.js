@@ -65,6 +65,25 @@ router.delete('/favourites/:sessionId', requireAuth, async (req, res) => {
   res.status(204).end();
 });
 
+// --- Usage tracking — fire-and-forget event log ----------------------------
+// Records logins, PDF downloads and screen views. Scoped to the caller; the
+// browser never reads this back. Best-effort: never blocks the UI.
+const TRACK_TYPES = new Set(['login', 'pdf_download', 'screen_view']);
+router.post('/track', requireAuth, async (req, res) => {
+  if (!ensureDb(res)) return;
+  const body = req.body || {};
+  const eventType = (body.event_type || '').toString();
+  if (!TRACK_TYPES.has(eventType)) {
+    return res.status(400).json({ error: 'invalid event_type' });
+  }
+  const detail = body.detail != null ? body.detail.toString().slice(0, 300) : null;
+  const { error } = await serviceClient
+    .from('usage_events')
+    .insert({ user_id: req.user.id, email: req.user.email, event_type: eventType, detail });
+  if (error) return res.status(500).json({ error: error.message });
+  res.status(204).end();
+});
+
 // --- Feedback — authenticated insert ---------------------------------------
 router.post('/feedback', requireAuth, async (req, res) => {
   if (!ensureDb(res)) return;

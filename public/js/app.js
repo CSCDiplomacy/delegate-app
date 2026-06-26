@@ -39,6 +39,7 @@
     logOut:   '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
     wifi:     '<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
     hash:     '<line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>',
+    download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
   };
   function ic(path, w) { return `<svg viewBox="0 0 24 24" width="${w||14}" height="${w||14}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`; }
   function typeIcon(t) { const m={meal:P.coffee,keynote:P.mic,visit:P.mapPin,social:P.users,workshop:P.wrench,panel:P.chat,ceremony:P.award}; return ic(m[(t||'').toLowerCase()]||P.clock,10); }
@@ -52,6 +53,10 @@
     return res.status === 204 ? null : res.json();
   }
   const getJson = (p) => fetch(p).then((r) => r.json());
+  // Fire-and-forget usage analytics. Never blocks or surfaces errors to the UI.
+  function track(eventType, detail) {
+    try { api('/track', { method: 'POST', body: JSON.stringify({ event_type: eventType, detail: detail || null }) }).catch(() => {}); } catch (e) {}
+  }
 
   // ---- time helpers (event tz) ----
   function tzNow(tz) {
@@ -107,7 +112,7 @@
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
     btnReset('btn-login');
     if (error) { m.textContent = error.message; m.className = 'form-msg error'; return; }
-    session = data.session; enterApp();
+    session = data.session; track('login'); enterApp();
   }
   async function doSendReset() {
     const m = el('reset-msg'); const email = el('reset-email').value.trim();
@@ -187,6 +192,7 @@
     if (name === 'contact' && !rendered.contact) renderContact();
     if (window.innerWidth < 960) window.scrollTo(0, 0);
     if (pushHistory) history.pushState({ tab: name }, '', '#' + name);
+    track('screen_view', name);
   }
 
   window.addEventListener('popstate', (e) => {
@@ -351,6 +357,12 @@
     const day = rundown.days[activeDay]; const isToday = day.date === date;
     let nowIdx = -1;
     if (isToday) for (let i = 0; i < day.items.length; i++) { const st = toMin(day.items[i].time), en = i + 1 < day.items.length ? toMin(day.items[i + 1].time) : st + 90; if (minutes >= st && minutes < en) { nowIdx = i; break; } }
+    // optional per-day "About this day" intro + resource download
+    el('day-about').innerHTML = (day.about || day.resource) ? `<div class="day-about">
+        <div class="day-about-label">About ${esc(day.label)}</div>
+        ${day.about ? `<p class="day-about-text">${esc(day.about)}</p>` : ''}
+        ${day.resource ? `<a class="chip resource breathing" href="${esc(day.resource.file)}" target="_blank" rel="noopener" download>${ic(P.download,13)}${esc(day.resource.label || 'Download resources')}</a>` : ''}
+      </div>` : '';
     if (!day.items || !day.items.length) { el('timeline').innerHTML = '<div class="empty" style="padding:40px 0;text-align:center">Programme coming soon.</div>'; return; }
     el('timeline').innerHTML = day.items.map((it, i) => {
       const id = `${day.date}T${it.time}`, s = split12(it.time), starred = favourites.has(id);
@@ -368,6 +380,7 @@
           ${it.gather_time ? `<div class="t-gather">Gather at ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
             <button class="chip cal-btn" data-day="${esc(day.date)}" data-title="${esc(it.title)}" data-time="${esc(it.time)}" data-venue="${esc(it.venue||'')}" data-dur="${it.duration_min||60}">${ic(P.calendar,12)}Add to calendar</button>
+            ${it.resource ? `<a class="chip resource breathing" href="${esc(it.resource.file)}" target="_blank" rel="noopener" download>${ic(P.download,12)}${esc(it.resource.label || 'Download resources')}</a>` : ''}
           </div>
         </div>
       </div>`;
@@ -662,6 +675,7 @@
     document.addEventListener('click', (e) => {
       const more = e.target.closest('.t-more'); if (more) { e.preventDefault(); const d = more.previousElementSibling; const open = d.classList.toggle('clamped'); more.textContent = open ? 'More' : 'Less'; return; }
       const cal = e.target.closest('.cal-btn'); if (cal) { e.preventDefault(); addToCalendar(cal); return; }
+      const dl = e.target.closest('.chip.resource'); if (dl) { track('pdf_download', dl.getAttribute('href')); /* let the native download proceed */ }
       const go = e.target.closest('[data-goto]'); if (go) { switchScreen(go.dataset.goto); closeDrawers(); return; }
       const day = e.target.closest('.day-tab[data-day]'); if (day) { renderRundown._userPicked = true; activeDay = +day.dataset.day; renderRundown(); return; }
       const fav = e.target.closest('[data-fav]'); if (fav) { e.preventDefault(); toggleFav(fav.dataset.fav, fav); return; }
