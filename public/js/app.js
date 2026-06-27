@@ -381,7 +381,7 @@
           ${it.description ? `<div class="t-desc-wrap"><div class="t-desc">${esc(it.description)}</div></div>` : ''}
           ${it.gather_time ? `<div class="t-gather">Gather at ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
-            ${map ? `<a class="chip" href="${esc(map)}" target="_blank" rel="noopener">${ic(P.mapPin,12)}Open in Maps</a>` : ''}
+            ${map ? `<a class="chip primary" href="${esc(map)}" target="_blank" rel="noopener">${ic(P.mapPin,12)}Open in Maps</a>` : ''}
             <button class="chip cal-btn" data-day="${esc(day.date)}" data-title="${esc(it.title)}" data-time="${esc(it.time)}" data-venue="${esc(it.venue||'')}" data-dur="${it.duration_min||60}">${ic(P.calendar,12)}Add to calendar</button>
             ${it.resource ? `<a class="chip resource breathing" href="${esc(it.resource.file)}" target="_blank" rel="noopener" download>${ic(P.download,12)}${esc(it.resource.label || 'Download resources')}</a>` : ''}
           </div>
