@@ -40,14 +40,6 @@
         { "time": "12:00", "end_time": "12:30", "duration_min": 30, "title": "Closing Remarks", "venue": "Rivvers Frankfurt City – Coworking Space, Baseler Str. 48, 60329 Frankfurt am Main", "type": "ceremony", "gather_time": null, "notify": true },
         { "time": "12:30", "end_time": "13:00", "duration_min": 30, "title": "Wrap-up & Departure", "venue": "Rivvers Frankfurt City – Coworking Space, Baseler Str. 48, 60329 Frankfurt am Main", "type": "social", "gather_time": null, "notify": true }
       ]
-    },
-    {
-      "label": "Day 4",
-      "date": "2026-06-28",
-      "title": "Departure",
-      "items": [
-        { "time": "11:00", "title": "Hotel Check-out", "venue": "Hotel Reception", "type": "social", "gather_time": null, "notify": true }
-      ]
     }
   ]
 }
