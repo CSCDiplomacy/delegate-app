@@ -6,7 +6,7 @@
      immediately, refresh in background.
    - Auth / per-user / dynamic: network-only, never cached. */
 
-const CACHE = 'cipes-v4';
+const CACHE = 'cipes-v5';
 const SHELL = [
   '/',
   '/index.html',

@@ -18,8 +18,6 @@
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
   function mapsLink(q) { if (!q) return null; if (/^https?:\/\//.test(q)) return q; return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`; }
-  // escape, then turn bare URLs into clickable links
-  function linkify(s) { return esc(s).replace(/(https?:\/\/[^\s<]+)/g, (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`); }
 
   /* ---- SVG icon paths (24×24 Feather-style) ---- */
   const P = {
@@ -360,9 +358,11 @@
     let nowIdx = -1;
     if (isToday) for (let i = 0; i < day.items.length; i++) { const st = toMin(day.items[i].time), en = i + 1 < day.items.length ? toMin(day.items[i + 1].time) : st + 90; if (minutes >= st && minutes < en) { nowIdx = i; break; } }
     // optional per-day "About this day" intro + resource download
-    el('day-about').innerHTML = (day.about || day.resource) ? `<div class="day-about">
+    const dayMap = mapsLink(day.map);
+    el('day-about').innerHTML = (day.about || day.resource || dayMap) ? `<div class="day-about">
         <div class="day-about-label">About ${esc(day.label)}</div>
-        ${day.about ? `<p class="day-about-text">${linkify(day.about)}</p>` : ''}
+        ${day.about ? `<p class="day-about-text">${esc(day.about)}</p>` : ''}
+        ${dayMap ? `<a class="chip primary" href="${esc(dayMap)}" target="_blank" rel="noopener">${ic(P.mapPin,13)}Open in Maps</a>` : ''}
         ${day.resource ? `<a class="chip resource breathing" href="${esc(day.resource.file)}" target="_blank" rel="noopener" download>${ic(P.download,13)}${esc(day.resource.label || 'Download resources')}</a>` : ''}
       </div>` : '';
     if (!day.items || !day.items.length) { el('timeline').innerHTML = '<div class="empty" style="padding:40px 0;text-align:center">Programme coming soon.</div>'; return; }
@@ -370,7 +370,6 @@
       const id = `${day.date}T${it.time}`, s = split12(it.time), starred = favourites.has(id);
       const endStr = it.end_time ? fmt12(it.end_time) : '';
       const typeCls = brassTypes.includes((it.type || '').toLowerCase()) ? 't-type' : 't-type subtle';
-      const map = it.venue ? mapsLink(it.venue) : null;
       return `<div class="t-item ${i === nowIdx ? 'is-now' : ''}">
         <div class="t-time">${esc(s.hm)}<small>${esc(s.ap)}</small>${endStr ? `<small class="t-end">– ${esc(endStr)}</small>` : ''}</div>
         <div class="t-dot"></div>
@@ -381,7 +380,6 @@
           ${it.description ? `<div class="t-desc-wrap"><div class="t-desc">${esc(it.description)}</div></div>` : ''}
           ${it.gather_time ? `<div class="t-gather">Gather at ${esc(fmt12(it.gather_time))}</div>` : ''}
           <div class="t-actions">
-            ${map ? `<a class="chip primary" href="${esc(map)}" target="_blank" rel="noopener">${ic(P.mapPin,12)}Open in Maps</a>` : ''}
             <button class="chip cal-btn" data-day="${esc(day.date)}" data-title="${esc(it.title)}" data-time="${esc(it.time)}" data-venue="${esc(it.venue||'')}" data-dur="${it.duration_min||60}">${ic(P.calendar,12)}Add to calendar</button>
             ${it.resource ? `<a class="chip resource breathing" href="${esc(it.resource.file)}" target="_blank" rel="noopener" download>${ic(P.download,12)}${esc(it.resource.label || 'Download resources')}</a>` : ''}
           </div>
