@@ -1,12 +1,15 @@
 /* CIPES Delegate App - service worker.
    Strategy:
-   - App shell (HTML/CSS/JS/images): cache-first → instant load on repeat visits,
+   - Page navigations (the HTML document): network-first → always load a fresh
+     index.html when online so markup + JS never drift apart; fall back to cache
+     when offline.
+   - Static assets (CSS/JS/images): cache-first → instant load on repeat visits,
      background-revalidate so updates still roll out silently.
    - Static event JSON (/api/rundown etc.): stale-while-revalidate - show cached
      immediately, refresh in background.
    - Auth / per-user / dynamic: network-only, never cached. */
 
-const CACHE = 'cipes-v9';
+const CACHE = 'cipes-v10';
 const SHELL = [
   '/',
   '/index.html',
@@ -50,6 +53,21 @@ self.addEventListener('fetch', (e) => {
   // Network-only endpoints - never touch cache.
   if (NETWORK_ONLY.some((p) => url.pathname.startsWith(p))) return;
 
+  // Page navigations (HTML document): network-first.
+  // Always fetch a fresh index.html when online so the markup and the cached
+  // JS can never drift out of sync; fall back to cache when offline.
+  if (request.mode === 'navigate' || (request.destination === 'document')) {
+    e.respondWith(
+      fetch(request)
+        .then((res) => {
+          if (res.ok) caches.open(CACHE).then((cache) => cache.put('/index.html', res.clone()));
+          return res;
+        })
+        .catch(() => caches.match(request).then((c) => c || caches.match('/index.html')))
+    );
+    return;
+  }
+
   // Static event JSON: stale-while-revalidate.
   // Returns cached copy instantly, then fetches fresh in the background.
   if (STATIC_API.some((p) => url.pathname.startsWith(p))) {
@@ -67,7 +85,7 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // App shell (HTML, CSS, JS, images): cache-first, revalidate in background.
+  // Static assets (CSS, JS, images): cache-first, revalidate in background.
   // On first visit: network. On repeat visits: instant from cache, update silently.
   e.respondWith(
     caches.open(CACHE).then((cache) =>
