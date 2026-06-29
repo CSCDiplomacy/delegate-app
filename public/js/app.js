@@ -313,7 +313,7 @@
       { label: 'Day 1', url: 'https://drive.google.com/drive/folders/1eLDBbIdvfR8Aby7o8Gdr5RYX92qtifam?usp=sharing' },
       { label: 'Day 2', url: 'https://drive.google.com/drive/folders/1oCqGK0MtdSbW3QsufvlVLHcFippMhLYg?usp=drive_link' },
     ];
-    const PHOTO_HASHTAGS = '#YEFFrankfurt2026 #CIPES #CSCD #PublicDiplomacy #Frankfurt2026';
+    const PHOTO_HASHTAGS = '#YEFFrankfurt2026 #CIPES #PublicDiplomacy #Frankfurt2026';
     if (el('dash-photos')) el('dash-photos').innerHTML =
       `<div class="photos-hero is-breathing">
          <span class="photos-new">NEW</span>
