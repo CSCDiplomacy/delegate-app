@@ -35,6 +35,9 @@
     globe:    '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
     building: '<rect x="4" y="2" width="16" height="20" rx="1"/><path d="M9 22V12h6v10"/><line x1="9" y1="7" x2="11" y2="7"/><line x1="13" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="11" y2="11"/><line x1="13" y1="11" x2="15" y2="11"/>',
     door:     '<path d="M3 22h18M5 22V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v17"/><circle cx="15" cy="12" r=".5" fill="currentColor"/>',
+    camera:   '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+    copy:     '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    check:    '<polyline points="20 6 9 17 4 12"/>',
     logIn:    '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>',
     logOut:   '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
     wifi:     '<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
@@ -277,12 +280,69 @@
     }
     return null;
   }
+  function copyHashtags(btn) {
+    const text = btn.getAttribute('data-copy-tags') || '';
+    const done = () => {
+      if (btn._reset) clearTimeout(btn._reset);
+      btn.classList.add('copied');
+      btn.innerHTML = `${ic(P.check,14)}<span>Copied!</span>`;
+      btn._reset = setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = `${ic(P.copy,14)}<span>Copy</span>`;
+      }, 2200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else { fallbackCopy(text, done); }
+  }
+  function fallbackCopy(text, done) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (_) {}
+    document.body.removeChild(ta);
+  }
   function renderDashboard() {
     const now = findNow();
     el('dash-live').innerHTML = now
       ? `<div class="live-strip" data-goto="rundown"><div class="live-strip-tag"><span class="dot"></span>Happening now</div>
          <div class="live-strip-title">${esc(now.it.title)}</div><div class="live-strip-meta">${esc(now.it.venue || '')} · ${esc(fmt12(now.it.time))}</div></div>`
       : '';
+    // event photo albums (post-event)
+    const photoAlbums = [
+      { label: 'Day 1', url: 'https://drive.google.com/drive/folders/1eLDBbIdvfR8Aby7o8Gdr5RYX92qtifam?usp=sharing' },
+      { label: 'Day 2', url: 'https://drive.google.com/drive/folders/1oCqGK0MtdSbW3QsufvlVLHcFippMhLYg?usp=drive_link' },
+    ];
+    const PHOTO_HASHTAGS = '#YEFFrankfurt2026 #CIPES #CSCD #PublicDiplomacy #Frankfurt2026';
+    if (el('dash-photos')) el('dash-photos').innerHTML =
+      `<div class="photos-hero is-breathing">
+         <span class="photos-new">NEW</span>
+         <div class="photos-hero-glow"></div>
+         <div class="photos-stack" aria-hidden="true">
+           <span class="photos-stack-img back2" style="background-image:url('/img/photos-cover.jpg')"></span>
+           <span class="photos-stack-img back1" style="background-image:url('/img/photos-cover.jpg')"></span>
+           <span class="photos-stack-img front" style="background-image:url('/img/photos-cover.jpg')"></span>
+         </div>
+         <div class="photos-hero-text">
+           <div class="photos-hero-title">Event Photos</div>
+           <div class="photos-hero-sub">Relive YEF Frankfurt 2026 — the official galleries are here.</div>
+         </div>
+         <div class="photos-hero-actions">
+           ${photoAlbums.map(a => `<a class="photos-btn" href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.label)} →</a>`).join('')}
+         </div>
+         <div class="photos-share">
+           <p class="photos-share-note">You may share these photos across professional and academic platforms like LinkedIn, Instagram, Facebook and X to highlight your participation in the CIPES · YEF Frankfurt 2026.</p>
+           <div class="photos-tagbox">
+             <div class="photos-tagbox-head">
+               <span class="photos-tagbox-label">Copy hashtags to use across your professional circles</span>
+               <button class="photos-copy" type="button" data-copy-tags="${esc(PHOTO_HASHTAGS)}">
+                 ${ic(P.copy,14)}<span>Copy</span>
+               </button>
+             </div>
+             <div class="photos-tags">${esc(PHOTO_HASHTAGS)}</div>
+           </div>
+         </div>
+       </div>`;
     // up next (next 2 items)
     const ups = [];
     if (rundown && rundown.days) {
@@ -680,6 +740,7 @@
       const day = e.target.closest('.day-tab[data-day]'); if (day) { renderRundown._userPicked = true; activeDay = +day.dataset.day; renderRundown(); return; }
       const fav = e.target.closest('[data-fav]'); if (fav) { e.preventDefault(); toggleFav(fav.dataset.fav, fav); return; }
       const spk = e.target.closest('[data-spk]'); if (spk) { showSpeaker(+spk.dataset.spk); return; }
+      const cp = e.target.closest('[data-copy-tags]'); if (cp) { e.preventDefault(); copyHashtags(cp); return; }
     });
   }
 

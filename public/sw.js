@@ -6,7 +6,7 @@
      immediately, refresh in background.
    - Auth / per-user / dynamic: network-only, never cached. */
 
-const CACHE = 'cipes-v5';
+const CACHE = 'cipes-v9';
 const SHELL = [
   '/',
   '/index.html',
@@ -16,6 +16,7 @@ const SHELL = [
   '/manifest.json',
   '/img/icon-192.png',
   '/img/icon-512.png',
+  '/img/photos-cover.jpg',
 ];
 const STATIC_API = ['/api/rundown', '/api/visits', '/api/speakers', '/api/checkin', '/api/contact'];
 const NETWORK_ONLY = ['/api/me', '/api/config', '/api/favourites', '/api/announcements', '/api/feedback', '/health'];

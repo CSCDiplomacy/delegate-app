@@ -344,6 +344,98 @@ a { color: inherit; text-decoration: none; touch-action: manipulation; -webkit-t
 .next-card.is-breathing:active { animation: none; }
 @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 @media (prefers-reduced-motion: reduce) { .next-card.is-breathing { animation: none; } }
+/* event photos hero (post-event headline card) */
+.photos-hero {
+  position: relative; overflow: hidden;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+  padding: 20px 22px; margin-bottom: 22px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #001224 0%, #052a48 100%);
+  border: 1px solid #001224;
+  box-shadow: 0 12px 30px rgba(0,18,36,0.30);
+}
+.photos-hero.is-breathing { animation: breathe 4.5s ease-in-out infinite; }
+.photos-hero.is-breathing:active { animation: none; }
+@media (prefers-reduced-motion: reduce) { .photos-hero.is-breathing { animation: none; } }
+.photos-hero-glow {
+  position: absolute; top: -60%; right: -20%; width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(209,197,169,0.28) 0%, transparent 70%);
+  pointer-events: none; animation: photos-glow 5s ease-in-out infinite;
+}
+@keyframes photos-glow { 0%,100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.15); } }
+/* stacked photo-album thumbnail: front sharp, two blurred copies fanned behind */
+.photos-stack { position: relative; flex-shrink: 0; width: 64px; height: 64px; }
+.photos-stack-img {
+  position: absolute; inset: 0; border-radius: 9px;
+  background-size: cover; background-position: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  border: 2px solid rgba(249,249,249,0.92);
+}
+.photos-stack-img.back2 { transform: rotate(-9deg) translate(-5px, 3px) scale(0.94); filter: blur(1.4px) brightness(0.7); opacity: 0.85; }
+.photos-stack-img.back1 { transform: rotate(6deg) translate(4px, -2px) scale(0.97); filter: blur(0.7px) brightness(0.85); opacity: 0.92; }
+.photos-stack-img.front { transform: rotate(-1.5deg); z-index: 2; }
+.photos-hero.is-breathing .photos-stack-img.front { animation: photos-front-float 4.5s ease-in-out infinite; }
+@keyframes photos-front-float { 0%,100% { transform: rotate(-1.5deg) translateY(0); } 50% { transform: rotate(-1.5deg) translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) { .photos-hero .photos-stack-img.front { animation: none; } }
+.photos-hero-text { flex: 1; min-width: 0; }
+.photos-hero-title { font-family: var(--font-display, 'Playfair Display', serif); font-size: 21px; font-weight: 800; color: #F9F9F9; line-height: 1.15; margin-bottom: 4px; }
+.photos-hero-sub { font-size: 12.5px; color: rgba(229,219,194,0.78); line-height: 1.45; }
+.photos-hero-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+.photos-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 800;
+  background: #D1C5A9; color: #001224; white-space: nowrap;
+  text-decoration: none; transition: transform .12s ease, box-shadow .12s ease;
+}
+.photos-btn:hover { box-shadow: 0 6px 16px rgba(209,197,169,0.35); }
+.photos-btn:active { transform: scale(0.96); }
+.photos-new {
+  position: absolute; top: 12px; right: 14px; z-index: 2;
+  font-size: 9.5px; font-weight: 900; letter-spacing: 0.12em;
+  padding: 3px 8px; border-radius: 6px; color: #001224; background: #D1C5A9;
+  animation: photos-new-pulse 1.8s ease-in-out infinite;
+}
+@keyframes photos-new-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(209,197,169,0.6); }
+  50% { box-shadow: 0 0 0 7px rgba(209,197,169,0); }
+}
+/* share note + hashtag copy */
+.photos-share { flex-basis: 100%; width: 100%; margin-top: 4px; padding-top: 16px; border-top: 1px solid rgba(209,197,169,0.22); }
+.photos-share-note { font-size: 12.5px; line-height: 1.55; color: rgba(229,219,194,0.82); margin: 0 0 12px; }
+/* boxed hashtags: copy bar on top, tags below */
+.photos-tagbox {
+  border: 1px solid rgba(209,197,169,0.30); border-radius: 12px;
+  background: rgba(0,0,0,0.18); overflow: hidden;
+}
+.photos-tagbox-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px 9px 14px;
+  border-bottom: 1px solid rgba(209,197,169,0.20);
+  background: rgba(209,197,169,0.07);
+}
+.photos-tagbox-label { flex: 1; min-width: 0; font-size: 11.5px; font-weight: 700; color: rgba(229,219,194,0.85); line-height: 1.35; }
+.photos-tags { font-size: 12px; font-weight: 700; line-height: 1.75; color: #D1C5A9; letter-spacing: 0.01em; word-break: break-word; padding: 12px 14px; margin: 0; }
+.photos-copy {
+  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+  padding: 7px 14px; border-radius: 8px; cursor: pointer;
+  font-size: 12px; font-weight: 800; text-align: left;
+  color: #F9F9F9; background: rgba(209,197,169,0.16);
+  border: 1px solid rgba(209,197,169,0.45);
+  transition: background .15s ease, border-color .15s ease, transform .12s ease;
+}
+.photos-copy svg { stroke: #D1C5A9; flex-shrink: 0; }
+.photos-copy:hover { background: rgba(209,197,169,0.26); }
+.photos-copy:active { transform: scale(0.96); }
+.photos-copy.copied { background: #D1C5A9; color: #001224; border-color: #D1C5A9; }
+.photos-copy.copied svg { stroke: #001224; }
+
+@media (prefers-reduced-motion: reduce) { .photos-hero-glow, .photos-new { animation: none; } }
+@media (max-width: 560px) {
+  .photos-hero { flex-wrap: wrap; gap: 14px; }
+  .photos-hero-actions { flex-direction: row; width: 100%; }
+  .photos-btn { flex: 1; }
+}
+
 .next-card-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 14px 0 0 14px; }
 .next-card-left { display: flex; flex-direction: column; align-items: center; width: 46px; flex-shrink: 0; }
 .next-card-time { font-size: 15px; font-weight: 900; line-height: 1.1; text-align: center; letter-spacing: -0.5px; }
